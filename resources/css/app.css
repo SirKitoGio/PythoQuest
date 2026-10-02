@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[x-cloak] {
+    display: none !important;
+}
+
+@layer components {
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg bg-forest px-5 py-2.5 text-sm font-medium text-cream transition hover:bg-forest-dark focus:outline-none focus:ring-2 focus:ring-leaf focus:ring-offset-2 focus:ring-offset-cream;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg border border-forest/30 bg-sand px-5 py-2.5 text-sm font-medium text-forest transition hover:bg-leaf/30;
+    }
+
+    .card {
+        @apply rounded-xl bg-white/70 p-6 shadow-sm ring-1 ring-forest/10;
+    }
+
+    .badge {
+        @apply inline-block rounded-md bg-leaf/40 px-3 py-0.5 text-xs font-medium text-forest-dark;
+    }
+}
