@@ -1,6 +1,5 @@
 {
 	frankenphp
-	email {$ACME_EMAIL:admin@example.com}
 }
 
 # SERVER_NAME is your domain (e.g. phytoquest.duckdns.org); Caddy obtains and renews the

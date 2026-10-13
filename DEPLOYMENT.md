@@ -84,6 +84,12 @@ Never commit `.env.production` or the PFAF CSV. Both are already in `.gitignore`
 
 ## 4. Free domain
 
+**Quickest (no account):** use sslip.io, which turns your IP into a name automatically.
+For Elastic IP `54.251.133.46`, use `phytoquest.54-251-133-46.sslip.io` (dashes instead
+of dots). HTTPS works with it as-is.
+
+For a nicer name:
+
 1. Sign in at <https://www.duckdns.org>, create a subdomain (e.g. `phytoquest`), and set its IP to your Elastic IP.
 2. Your site will be `https://phytoquest.duckdns.org`.
 3. Students can instead claim a free `.me` domain from the GitHub Student Developer Pack (Namecheap) and add an **A record** pointing to the Elastic IP.
@@ -120,7 +126,6 @@ Fill in every `CHANGE_ME`:
 | `REVERB_APP_ID` | any number, e.g. `482910` |
 | `ML_SERVICE_URL` | `https://YOUR_HF_USERNAME-phytoquest-ml.hf.space` |
 | `ML_SERVICE_TOKEN` | the same value as the Space's `ML_API_TOKEN` |
-| `ACME_EMAIL` | your email (for certificate expiry notices) |
 
 ## 6. Start it and load the plant data
 
