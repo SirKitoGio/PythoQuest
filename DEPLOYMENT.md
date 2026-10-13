@@ -1,106 +1,76 @@
 # Deploying PhytoQuest
 
-PhytoQuest runs as Docker containers. The same files work on any Linux server; this guide
-uses the **AWS free tier** for the website and a **free Hugging Face Space** for the
-identification model.
+PhytoQuest runs as Docker containers on one Linux server: the website, database, background
+queue, live updates and the identification model. This guide uses the **AWS free tier**.
+The same steps work on any Arm or x86 Ubuntu server, including Oracle Cloud's Always Free
+tier (see the end).
 
 ```
-                          ┌──────────────── AWS EC2 t4g.small (free trial) ────────────────┐
- Browser ── HTTPS 443 ──▶ │  web (FrankenPHP + Caddy, auto HTTPS)  ──▶ postgres (data)     │
-   ▲   WebSocket /app ──▶ │  reverb (live notifications)              queue (background)   │
-   │                      └────────────────────────────────────────────────┬───────────────┘
-   └──────── live updates ◀──────────────────────────────────────────────── │ HTTPS + token
-                                                                            ▼
-                                                  Hugging Face Space (free CPU, 16 GB)
-                                                  ml-service: BioCLIP identification
+                       ┌──────────────── AWS EC2 t4g.small (2 vCPU, 2 GB + 4 GB swap) ────────────────┐
+ Browser ─ HTTPS 443 ─▶│ web (FrankenPHP + Caddy, auto HTTPS) ──▶ postgres                             │
+   ▲  WebSocket /app ─▶│ reverb (live notifications)              queue ──▶ ml (BioCLIP identification) │
+   └── live updates ◀──└────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## What it costs
 
 | Part | Where | Cost |
 | --- | --- | --- |
-| Website, database, queue, live updates | AWS EC2 `t4g.small` (2 vCPU, 2 GB) | Free (750 h/month) **until 31 Dec 2026** under AWS's t4g trial |
-| Public IP, 30 GB disk | AWS | About US$6/month, paid from the US$100–200 new-account credits |
-| Identification model | Hugging Face Space, CPU basic | Free (sleeps after 48 h without use) |
-| Domain + HTTPS certificate | DuckDNS + Let's Encrypt | Free |
+| Everything (site, database, queue, live updates, model) | AWS EC2 `t4g.small` | Free 750 h/month **until 31 Dec 2026** under AWS's t4g trial |
+| Public IP, 30 GB disk | AWS | About US$6/month, paid from new-account credits |
+| Domain + HTTPS | sslip.io or DuckDNS + Let's Encrypt | Free |
 
-After 31 Dec 2026 the AWS server costs roughly US$12–20/month (check your region). To stay
-at $0 long-term, move the same stack to Oracle Cloud's Always Free tier (see the end of this
-guide). Set an AWS budget alert before launching anything (step 2).
+**AWS "Free plan" accounts close after 6 months or when the credits run out.** Check the
+banner in the AWS console. Before that date, either upgrade to a paid plan (roughly US$6/month
+until 31 Dec 2026, then about US$15–20/month) or move to Oracle's Always Free tier.
+
+> Hugging Face Docker Spaces now require a paid PRO plan, so the model runs on the same
+> server instead. Pointing `ML_SERVICE_URL` at any other host that runs `ml-service/` also works.
 
 ---
 
 ## 1. Put the code on GitHub
 
-The server pulls from your repository, so commit everything, including `Dockerfile`,
-`compose.production.yaml` and `deploy/`, and push to `main`.
+The server pulls from your repository's `main` branch. Never commit `.env.production` or the
+PFAF CSV; both are already in `.gitignore`.
 
-Never commit `.env.production` or the PFAF CSV. Both are already in `.gitignore`.
+## 2. AWS server
 
-## 2. Hugging Face Space (identification model)
-
-1. Create a free account at <https://huggingface.co>, then **New Space**:
-   name `phytoquest-ml`, SDK **Docker** (blank template), hardware **CPU basic (free)**, visibility **Public**.
-2. Open the Space's **Settings → Variables and secrets → New secret**:
-   - Name: `ML_API_TOKEN`
-   - Value: a long random string. Generate one with `openssl rand -hex 24` and keep it; the server uses the same value.
-3. Export the species list on your laptop (it must match the catalogue you import in step 6):
-
-   ```bash
-   php artisan phytoquest:export-taxa
-   ```
-
-4. Push the service to the Space (replace `YOUR_HF_USERNAME`; use an HF access token with *write* scope as the password):
-
-   ```bash
-   git clone https://huggingface.co/spaces/YOUR_HF_USERNAME/phytoquest-ml /tmp/phytoquest-ml
-   rsync -a --exclude .venv --exclude cache --exclude .gitignore --exclude __pycache__ ml-service/ /tmp/phytoquest-ml/
-   cd /tmp/phytoquest-ml && git add -A && git commit -m "Deploy PhytoQuest ML service" && git push
-   ```
-
-5. The first build takes 15–25 minutes, because it downloads BioCLIP and pre-computes embeddings for every species. When the Space shows **Running**, check it:
-
-   ```bash
-   curl https://YOUR_HF_USERNAME-phytoquest-ml.hf.space/health
-   ```
-
-   Expect `"status":"ok"` and `"taxa_count":4138`.
-
-## 3. AWS account and server
-
-1. Sign up at <https://aws.amazon.com/free> (choose the **Free plan**). Then, before anything else:
-   **Billing → Budgets → Create budget → Zero spend / monthly cost budget of US$1** with your email.
-2. Choose the region **Asia Pacific (Singapore) `ap-southeast-1`**. It is closest to the Philippines.
+1. Sign up at <https://aws.amazon.com/free>. Before anything else, create a cost budget:
+   **Billing → Budgets → Create budget → Monthly cost budget**, US$5, with your email.
+2. Choose the region **Asia Pacific (Singapore) `ap-southeast-1`**.
 3. **EC2 → Launch instance**:
    - Name: `phytoquest`
-   - Image: **Ubuntu Server 24.04 LTS**, architecture **64-bit (Arm)**
-   - Instance type: **`t4g.small`**
-   - Key pair: create one, download the `.pem`
-   - Network settings → security group, allow:
+   - Image: **Ubuntu Server 24.04 LTS**, **64-bit (Arm)**
+   - Type: **`t4g.small`**
+   - Key pair: create one (`.pem`)
+   - Security group:
      - SSH (22) from **My IP**
-     - HTTP (80) and HTTPS (443) from **Anywhere**
+     - HTTP (80) and HTTPS (443) from anywhere
    - Storage: **30 GB gp3**
-4. **EC2 → Elastic IPs → Allocate**, then **Associate** it with the instance. This gives the server an address that survives restarts.
+4. **EC2 → Elastic IPs → Allocate**, then **Associate** it with the instance. Use this **public** address from now on, not the `172.31.x.x` private one.
+5. On your Mac, move the key into place and lock it down:
 
-## 4. Free domain
+   ```bash
+   mv ~/Downloads/phytoquest.pem ~/.ssh/ && chmod 400 ~/.ssh/phytoquest.pem
+   ```
 
-**Quickest (no account):** use sslip.io, which turns your IP into a name automatically.
-For Elastic IP `54.251.133.46`, use `phytoquest.54-251-133-46.sslip.io` (dashes instead
-of dots). HTTPS works with it as-is.
+## 3. Free domain
 
-For a nicer name:
+- **No account needed: sslip.io.** For IP `54.251.133.46`, the name `phytoquest.54-251-133-46.sslip.io` works immediately (dashes instead of dots).
+- **Nicer name: DuckDNS.** Create a subdomain at <https://www.duckdns.org> pointing at the Elastic IP, e.g. `phytoquest.duckdns.org`.
 
-1. Sign in at <https://www.duckdns.org>, create a subdomain (e.g. `phytoquest`), and set its IP to your Elastic IP.
-2. Your site will be `https://phytoquest.duckdns.org`.
-3. Students can instead claim a free `.me` domain from the GitHub Student Developer Pack (Namecheap) and add an **A record** pointing to the Elastic IP.
-
-## 5. Prepare the server
+## 4. Prepare the server
 
 ```bash
-ssh -i phytoquest.pem ubuntu@YOUR_ELASTIC_IP
+ssh -i ~/.ssh/phytoquest.pem ubuntu@YOUR_ELASTIC_IP
+```
 
-# 2 GB swap so image builds never run out of memory
-sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile
+Then, on the server:
+
+```bash
+# 4 GB of swap: the model needs headroom on a 2 GB machine
+sudo fallocate -l 4G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile
 echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 
 # Docker
@@ -108,83 +78,113 @@ curl -fsSL https://get.docker.com | sudo sh
 sudo usermod -aG docker ubuntu && exit
 ```
 
-Reconnect with the same `ssh -i …` command so the docker group takes effect, then:
+Reconnect with the same `ssh` command, then create the settings file. Replace `YOUR_DOMAIN`
+first; the secrets are generated on the server and never leave it:
 
 ```bash
 git clone https://github.com/SirKitoGio/PythoQuest.git phytoquest && cd phytoquest
-cp .env.production.example .env.production
-nano .env.production
+cp .env.production.example .env.production && chmod 600 .env.production
+DOMAIN=YOUR_DOMAIN
+sed -i \
+  -e "s|phytoquest\.duckdns\.org|$DOMAIN|g" \
+  -e "s|^APP_KEY=.*|APP_KEY=base64:$(openssl rand -base64 32)|" \
+  -e "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -hex 16)|" \
+  -e "s|^REVERB_APP_ID=.*|REVERB_APP_ID=$(shuf -i 100000-999999 -n 1)|" \
+  -e "s|^REVERB_APP_KEY=.*|REVERB_APP_KEY=$(openssl rand -hex 10)|" \
+  -e "s|^REVERB_APP_SECRET=.*|REVERB_APP_SECRET=$(openssl rand -hex 16)|" \
+  -e "s|^ML_SERVICE_TOKEN=.*|ML_SERVICE_TOKEN=$(openssl rand -hex 24)|" \
+  .env.production
+grep -c CHANGE_ME .env.production   # should print 1 (the explanatory comment)
 ```
 
-Fill in every `CHANGE_ME`:
-
-| Setting | Value |
-| --- | --- |
-| `APP_URL`, `SERVER_NAME`, `REVERB_CLIENT_HOST`, `MAIL_FROM_ADDRESS` | your domain |
-| `APP_KEY` | `echo "base64:$(openssl rand -base64 32)"` |
-| `DB_PASSWORD`, `REVERB_APP_KEY`, `REVERB_APP_SECRET` | `openssl rand -hex 16` each |
-| `REVERB_APP_ID` | any number, e.g. `482910` |
-| `ML_SERVICE_URL` | `https://YOUR_HF_USERNAME-phytoquest-ml.hf.space` |
-| `ML_SERVICE_TOKEN` | the same value as the Space's `ML_API_TOKEN` |
-
-## 6. Start it and load the plant data
+## 5. Start the site and load the plant data
 
 ```bash
-docker compose -f compose.production.yaml --env-file .env.production up -d --build --wait
+alias dc='docker compose -f compose.production.yaml --env-file .env.production'
+dc build web
+dc up -d --no-build --wait web queue reverb postgres
 ```
 
-The web container creates the database tables on start; the queue and live-update workers start once it is healthy.
+The web container creates the database tables and obtains the HTTPS certificate on start.
+Check that `https://YOUR_DOMAIN` loads with a padlock.
 
-Upload the PFAF export from your laptop, then import it on the server:
+Upload the PFAF export from your Mac:
 
 ```bash
-# on your laptop
-scp -i phytoquest.pem ~/Downloads/pfaf_plants_merged.csv ubuntu@YOUR_ELASTIC_IP:~/
-
-# on the server, inside ~/phytoquest
-docker compose -f compose.production.yaml --env-file .env.production cp ~/pfaf_plants_merged.csv web:/app/storage/app/private/imports/pfaf_plants_merged.csv
-docker compose -f compose.production.yaml --env-file .env.production exec web php artisan db:seed --class=PlantSeeder --force
+scp -i ~/.ssh/phytoquest.pem ~/Downloads/pfaf_plants_merged.csv ubuntu@YOUR_ELASTIC_IP:~/
 ```
 
-Then download the plant photos to the server once. pfaf.org is slow and drops requests
-under load, so serving our own copies keeps pages fast. This takes 20–40 minutes; it is
-safe to re-run, and it resumes where it stopped:
+Then, on the server:
 
 ```bash
-docker compose -f compose.production.yaml --env-file .env.production exec -d web php artisan phytoquest:cache-plant-images
+dc cp ~/pfaf_plants_merged.csv web:/app/storage/app/private/imports/pfaf_plants_merged.csv
+dc exec web php artisan db:seed --class=PlantSeeder --force
+dc exec -d web php artisan phytoquest:cache-plant-images
 ```
 
-This imports 4,131 PFAF species plus the 20 Philippine pilot species. Do **not** run the
-full `db:seed` in production: it creates demo accounts with the password `password`.
+This imports 4,131 PFAF species and the 20 Philippine pilot species, then downloads the plant
+photos in the background. The download takes 20–40 minutes, and re-running the command resumes it.
 
-Create your administrator:
+Do **not** run the full `db:seed` in production: it creates demo accounts with the password `password`.
 
-1. Open `https://YOUR_DOMAIN/register` and sign up.
+## 6. Identification model
+
+The model image pre-computes embeddings for every species when it is built. That takes about
+15 minutes on a Mac but over an hour on a `t4g.small`, so build it on an Apple Silicon Mac
+(the same Arm architecture) and copy it to the server.
+
+On your Mac, from the project folder, with Docker Desktop running:
+
+```bash
+# 1. Use the server's exact species list, so the pre-computed embeddings match it
+ssh -i ~/.ssh/phytoquest.pem ubuntu@YOUR_ELASTIC_IP \
+  'cd phytoquest && docker compose -f compose.production.yaml --env-file .env.production exec -T web sh -c "php artisan phytoquest:export-taxa >/dev/null && cat storage/app/private/taxa.json"' \
+  > ml-service/data/taxa.json
+
+# 2. Build (about 15 minutes) and copy to the server (about 1.1 GB)
+docker build -t phytoquest-ml:latest ml-service
+docker save phytoquest-ml:latest | gzip | ssh -i ~/.ssh/phytoquest.pem ubuntu@YOUR_ELASTIC_IP 'gunzip | docker load'
+```
+
+Then, on the server:
+
+```bash
+dc up -d --no-build --wait ml
+dc up -d --no-build queue
+```
+
+On an x86 Mac or PC, build with `docker buildx build --platform linux/arm64 …` instead. That is
+slower, because it emulates Arm.
+
+## 7. Create your administrator
+
+1. Sign up at `https://YOUR_DOMAIN/register`.
 2. On the server, run:
 
    ```bash
-   docker compose -f compose.production.yaml --env-file .env.production exec web php artisan phytoquest:make-admin you@example.com
+   dc exec web php artisan phytoquest:make-admin you@example.com
    ```
 
 3. Promote reviewers from **Manage users** in the site menu.
 
-## 7. Check everything
+## 8. Check everything
 
-- `https://YOUR_DOMAIN` loads with a padlock (the first HTTPS certificate can take a minute).
-- Plants search returns results, and the map shows the campus.
-- **Scanner:** upload a leaf photo. If the Space was asleep, the first result can take up to a few minutes while it wakes; the page updates on its own.
-- **Live notifications:** with one browser logged in as a researcher and another as a reviewer, review a sighting; the researcher's bell updates without reloading.
-- Logs: `docker compose -f compose.production.yaml --env-file .env.production logs -f web queue reverb`
+- **Search:** plant search returns results; the map shows the campus.
+- **Scanner:** upload a leaf photo; ranked matches appear within seconds.
+- **Live notifications:** review a sighting from a reviewer account, and the researcher's bell updates without reloading.
+- **Logs:** `dc logs -f web queue reverb ml`
+- **Memory:** `free -h`. Swap use of 1–2 GB is normal with the model loaded.
 
 ## Updating
 
-After pushing new commits to GitHub, run on the server:
+After pushing new commits to `main`, run on the server:
 
 ```bash
 cd ~/phytoquest && ./deploy/deploy.sh
 ```
 
-If the plant catalogue changes, re-export the taxa and push to the Space again (step 2.3–2.4).
+This rebuilds and restarts the website. Repeat step 6 only when `ml-service/` or the plant
+catalogue changes.
 
 ## Backups
 
@@ -199,29 +199,23 @@ Copy `~/backups` off the server occasionally. Uploaded photos live in the `phyto
 
 ## Things to know
 
-- **Camera, GPS and offline saving only work over HTTPS.** Always use the domain, never the raw IP.
-- **Email:** password-reset emails are only written to the log until you add an SMTP provider (Brevo and Resend have free tiers) in `MAIL_*`.
-- **Plant data licence:** PFAF content and images are copyrighted. Check their terms before opening the site to the public.
-- **Hugging Face Space sleep:** a free Space sleeps after 48 hours without requests. Scans made while it wakes are retried automatically for about 4 minutes.
+- **HTTPS only.** Camera, GPS and offline saving need HTTPS, so always use the domain, never the raw IP.
+- **Email:** password-reset emails go to the log until you set `MAIL_*` to an SMTP provider (Brevo and Resend have free tiers).
+- **Plant data licence:** PFAF content and images are copyrighted. Check their terms before opening the site widely.
 
-## Alternative: everything on one always-free server (Oracle Cloud)
+## Moving to Oracle Cloud Always Free (stays free)
 
-Oracle's Always Free tier offers an Arm VM with 2 OCPUs and 12 GB RAM, enough to run the model alongside the site.
+Oracle's Always Free Arm VM (2 OCPU, 12 GB RAM) runs the same stack with room to spare.
 
 1. Create an Ubuntu 24.04 **VM.Standard.A1.Flex** instance (2 OCPU / 12 GB).
-2. In the VCN **security list**, add ingress rules for TCP 80 and 443. Oracle's Ubuntu image also blocks them in its firewall, so open them there too:
+2. In the VCN **security list**, allow TCP 80 and 443. Also open them in Ubuntu's firewall:
 
    ```bash
    sudo iptables -I INPUT 6 -p tcp -m multiport --dports 80,443 -j ACCEPT
    sudo netfilter-persistent save
    ```
 
-3. Follow steps 4–7 above. In `.env.production`, set:
-   - `COMPOSE_PROFILES=ml`
-   - `ML_SERVICE_URL=http://ml:8001`
-   - `ML_SERVICE_TOKEN` to any random value
+3. Follow steps 3–8 above. The swap step is optional there, and with 12 GB you can build the model directly on the server: `dc build ml`.
+4. To move existing data, restore a `pg_dump` into the new database and copy the `phytoquest_storage` volume.
 
-   Skip the Hugging Face step.
-4. After the PFAF import, run `docker compose … exec web php artisan phytoquest:export-taxa` and then `docker compose … restart ml`, so the model ranks against the full catalogue.
-
-Oracle may reclaim Always Free instances that sit idle for long periods, and A1 capacity is sometimes unavailable in busy regions; retry or pick another region.
+A1 capacity is sometimes unavailable in busy regions; retry or choose another region.
