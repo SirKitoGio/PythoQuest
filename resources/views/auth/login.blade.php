@@ -1,7 +1,7 @@
 <x-guest-layout>
     <x-slot name="aside">
         <div class="rounded-2xl bg-cream/10 p-8 ring-1 ring-cream/20 sm:p-12">
-            <h1 class="font-heading text-4xl font-bold">PhytoQuest</h1>
+            <h1 class="font-heading text-3xl font-bold sm:text-4xl">PhytoQuest</h1>
             <p class="mt-4 text-lg font-medium text-cream/85">
                 Pick up where you left off: search plant profiles, revisit your sightings and keep building your field research trail.
             </p>

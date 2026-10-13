@@ -2,7 +2,8 @@
     $links = [
         'Home' => route('home'),
         'Plants' => route('plants.index'),
-        'Scanner' => route('sightings.create'),
+        'Map' => route('map'),
+        'Scanner' => route('identifications.create'),
         'About' => route('about'),
         'Contact' => route('contact'),
     ];

@@ -1,0 +1,18 @@
+{
+    "name": "PhytoQuest",
+    "short_name": "PhytoQuest",
+    "description": "Location-aware botanical research companion.",
+    "start_url": "/dashboard",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#FFF8CF",
+    "theme_color": "#2A7C13",
+    "icons": [
+        { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    ],
+    "shortcuts": [
+        { "name": "Identify a plant", "url": "/identifications/create" },
+        { "name": "Log a sighting", "url": "/sightings/create" },
+        { "name": "Sighting map", "url": "/map" }
+    ]
+}

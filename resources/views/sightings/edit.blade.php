@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-heading text-4xl font-bold">Edit <span class="font-accent italic text-forest">sighting</span></h2>
+        <h2 class="font-heading text-3xl font-bold sm:text-4xl">Edit <span class="font-accent italic text-forest">sighting</span></h2>
         <p class="mt-2 text-gray-700">Saving changes sends the sighting back to pending review.</p>
     </x-slot>
 

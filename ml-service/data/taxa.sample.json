@@ -1,0 +1,17 @@
+[
+  {"scientific_name": "Vitex negundo", "family": "Lamiaceae", "common_name": "Lagundi"},
+  {"scientific_name": "Moringa oleifera", "family": "Moringaceae", "common_name": "Malunggay"},
+  {"scientific_name": "Psidium guajava", "family": "Myrtaceae", "common_name": "Bayabas"},
+  {"scientific_name": "Senna alata", "family": "Fabaceae", "common_name": "Akapulko"},
+  {"scientific_name": "Azadirachta indica", "family": "Meliaceae", "common_name": "Neem"},
+  {"scientific_name": "Euphorbia hirta", "family": "Euphorbiaceae", "common_name": "Tawa-tawa"},
+  {"scientific_name": "Allium sativum", "family": "Amaryllidaceae", "common_name": "Bawang"},
+  {"scientific_name": "Blumea balsamifera", "family": "Asteraceae", "common_name": "Sambong"},
+  {"scientific_name": "Momordica charantia", "family": "Cucurbitaceae", "common_name": "Ampalaya"},
+  {"scientific_name": "Peperomia pellucida", "family": "Piperaceae", "common_name": "Ulasimang-bato"},
+  {"scientific_name": "Lagerstroemia speciosa", "family": "Lythraceae", "common_name": "Banaba"},
+  {"scientific_name": "Ehretia microphylla", "family": "Boraginaceae", "common_name": "Tsaang gubat"},
+  {"scientific_name": "Combretum indicum", "family": "Combretaceae", "common_name": "Niyog-niyogan"},
+  {"scientific_name": "Coleus amboinicus", "family": "Lamiaceae", "common_name": "Oregano"},
+  {"scientific_name": "Clinopodium douglasii", "family": "Lamiaceae", "common_name": "Yerba buena"}
+]

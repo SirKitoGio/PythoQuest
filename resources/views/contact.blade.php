@@ -1,8 +1,8 @@
 <x-site-layout title="Contact">
-    <section class="mx-auto grid max-w-6xl gap-12 px-6 pt-16 md:grid-cols-2">
+    <section class="mx-auto grid max-w-6xl gap-12 px-4 pt-8 sm:px-6 sm:pt-16 md:grid-cols-2">
         <div>
             <p class="text-xl font-medium text-forest">Get in touch</p>
-            <h1 class="mt-2 font-heading text-5xl font-bold">Contact <span class="font-accent italic text-forest">us</span></h1>
+            <h1 class="mt-2 font-heading text-4xl font-bold sm:text-5xl">Contact <span class="font-accent italic text-forest">us</span></h1>
             <p class="mt-6 text-lg text-gray-700">
                 Questions about the pilot, reviewer access or partner locations? Reach the PhytoQuest team through the details below.
             </p>

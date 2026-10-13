@@ -1,0 +1,31 @@
+{
+	frankenphp
+	email {$ACME_EMAIL:admin@example.com}
+}
+
+# SERVER_NAME is your domain (e.g. phytoquest.duckdns.org); Caddy obtains and renews the
+# Let's Encrypt certificate automatically. Use ":80" to test without HTTPS.
+{$SERVER_NAME:localhost} {
+	root * /app/public
+	encode zstd br gzip
+
+	request_body {
+		max_size 12MB
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(self), geolocation=(self), microphone=()"
+		-Server
+	}
+
+	# Reverb WebSockets (live notifications) share the site's domain and certificate.
+	@reverb path /app/* /apps/*
+
+	route {
+		reverse_proxy @reverb reverb:8080
+		php_server
+	}
+}

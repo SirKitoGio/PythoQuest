@@ -1,0 +1,88 @@
+# PhytoQuest production stack.
+#   docker compose -f compose.production.yaml --env-file .env.production up -d --build
+# Add COMPOSE_PROFILES=ml to .env.production to run the ML service on this same server
+# (needs ~3 GB RAM); otherwise point ML_SERVICE_URL at a hosted ML service.
+name: phytoquest
+
+x-app: &app
+  build: .
+  image: phytoquest-app
+  env_file: .env.production
+  restart: unless-stopped
+  volumes:
+    - storage:/app/storage
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+services:
+  web:
+    <<: *app
+    environment:
+      RUN_MIGRATIONS: "true"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - storage:/app/storage
+      - caddy_data:/data
+      - caddy_config:/config
+
+  queue:
+    <<: *app
+    command: ["php", "artisan", "queue:work", "--tries=5", "--timeout=85", "--sleep=3", "--max-time=3600"]
+    depends_on:
+      web:
+        condition: service_healthy
+    healthcheck:
+      disable: true
+
+  reverb:
+    <<: *app
+    command: ["php", "artisan", "reverb:start", "--host=0.0.0.0", "--port=8080"]
+    depends_on:
+      web:
+        condition: service_healthy
+    healthcheck:
+      disable: true
+
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    command: ["postgres", "-c", "shared_buffers=128MB", "-c", "max_connections=40"]
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  ml:
+    profiles: ["ml"]
+    build: ./ml-service
+    restart: unless-stopped
+    environment:
+      ML_API_TOKEN: ${ML_SERVICE_TOKEN}
+      TAXA_PATH: /laravel-storage/app/private/taxa.json
+    volumes:
+      - storage:/laravel-storage:ro
+      - ml_cache:/home/app/service/cache
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 15s
+      timeout: 5s
+      start_period: 15m
+      retries: 4
+
+volumes:
+  storage:
+  pgdata:
+  caddy_data:
+  caddy_config:
+  ml_cache:

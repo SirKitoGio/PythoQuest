@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-wrap items-end justify-between gap-4">
-            <h2 class="font-heading text-4xl font-bold">My <span class="font-accent italic text-forest">sightings</span></h2>
+            <h2 class="font-heading text-3xl font-bold sm:text-4xl">My <span class="font-accent italic text-forest">sightings</span></h2>
             <a href="{{ route('sightings.create') }}" class="btn-primary">+ Log a sighting</a>
         </div>
     </x-slot>

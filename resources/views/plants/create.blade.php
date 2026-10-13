@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-heading text-4xl font-bold">Add a <span class="font-accent italic text-forest">plant profile</span></h2>
+        <h2 class="font-heading text-3xl font-bold sm:text-4xl">Add a <span class="font-accent italic text-forest">plant profile</span></h2>
     </x-slot>
 
     <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6">

@@ -3,12 +3,12 @@
     <head>
         @include('layouts.partials.head')
     </head>
-    <body class="bg-cream font-sans text-gray-900 antialiased">
+    <body @class(["bg-cream font-sans text-gray-900 antialiased", "pb-tab-bar lg:pb-0" => auth()->check()])>
         <div class="min-h-screen">
             @include('layouts.navigation')
 
             @isset($header)
-                <header class="mx-auto max-w-6xl px-4 pt-10 sm:px-6">
+                <header class="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-10">
                     {{ $header }}
                 </header>
             @endisset
@@ -25,5 +25,8 @@
         </div>
 
         <x-site-footer />
+        @auth
+            <x-mobile-tab-bar />
+        @endauth
     </body>
 </html>

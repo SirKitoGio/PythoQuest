@@ -19,7 +19,7 @@ class PhytoQuestTest extends TestCase
         $this->seed();
         $plant = Plant::first();
 
-        foreach (['/', '/about', '/contact', '/plants', "/plants/{$plant->id}", '/login', '/register'] as $uri) {
+        foreach (['/', '/about', '/contact', '/map', '/plants', "/plants/{$plant->id}", '/login', '/register'] as $uri) {
             $this->get($uri)->assertOk();
         }
     }
@@ -32,14 +32,38 @@ class PhytoQuestTest extends TestCase
 
         $this->actingAs($user);
 
-        foreach (['/', '/dashboard', '/plants/create', '/sightings', '/sightings/create', "/sightings/{$sighting->id}", "/sightings/{$sighting->id}/edit", '/profile'] as $uri) {
+        foreach (['/', '/dashboard', '/sightings', '/sightings/create', "/sightings/{$sighting->id}", "/sightings/{$sighting->id}/edit", '/identifications', '/identifications/create', '/community', '/history', '/notifications', '/profile'] as $uri) {
             $this->get($uri)->assertOk();
+        }
+    }
+
+    public function test_reviewer_and_admin_pages_render_with_seeded_data(): void
+    {
+        $this->seed();
+
+        $this->actingAs(User::where('email', 'reviewer@phytoquest.test')->first());
+        foreach (['/review', '/review?tab=identifications', '/plants/create', '/dashboard'] as $uri) {
+            $this->get($uri)->assertOk();
+        }
+
+        $this->actingAs(User::where('email', 'keithalan.speirs25@gmail.com')->first());
+        foreach (['/admin/users', '/admin/audit-logs'] as $uri) {
+            $this->get($uri)->assertOk();
+        }
+    }
+
+    public function test_researchers_cannot_reach_reviewer_or_admin_pages(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        foreach (['/review', '/plants/create', '/admin/users', '/admin/audit-logs'] as $uri) {
+            $this->get($uri)->assertForbidden();
         }
     }
 
     public function test_guests_are_redirected_from_protected_pages(): void
     {
-        foreach (['/dashboard', '/plants/create', '/sightings', '/sightings/create'] as $uri) {
+        foreach (['/dashboard', '/plants/create', '/sightings', '/sightings/create', '/identifications/create', '/community', '/history', '/review'] as $uri) {
             $this->get($uri)->assertRedirect('/login');
         }
     }
@@ -55,7 +79,7 @@ class PhytoQuestTest extends TestCase
 
     public function test_plant_crud(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->admin()->create());
 
         $data = [
             'common_name' => 'Sambong',
@@ -65,6 +89,7 @@ class PhytoQuestTest extends TestCase
             'plant_parts' => 'leaf',
             'physical_features' => 'Aromatic hairy leaves.',
             'source_label' => 'research paper',
+            'conservation_status' => 'LC',
         ];
 
         $this->post('/plants', $data)->assertRedirect();
@@ -80,7 +105,7 @@ class PhytoQuestTest extends TestCase
 
     public function test_plant_validation_rejects_unknown_category(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->reviewer()->create());
 
         $this->post('/plants', ['common_name' => 'X', 'category' => 'Cactus'])
             ->assertSessionHasErrors(['category', 'scientific_name', 'source_label']);

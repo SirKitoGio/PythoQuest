@@ -1,0 +1,36 @@
+[project]
+name = "phytoquest-ml-service"
+version = "0.1.0"
+description = "Zero-shot plant species identification (BioCLIP) for PhytoQuest"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "python-multipart",
+    "pillow",
+    "numpy",
+    "open_clip_torch",
+    "torch",
+    "torchvision",
+]
+
+[dependency-groups]
+dev = ["pytest", "httpx"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+# Linux images (Docker, Hugging Face Spaces) use CPU-only PyTorch; the default
+# PyPI wheels for x86_64 bundle CUDA and are ~2.5 GB larger.
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+torchvision = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]

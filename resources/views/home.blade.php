@@ -4,7 +4,7 @@
         <div class="mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-[1fr_437px]">
             <div>
                 <p class="font-medium text-leaf">A location-aware botanical research companion.</p>
-                <h1 class="mt-3 font-heading text-5xl font-bold leading-tight sm:text-6xl">
+                <h1 class="mt-3 font-heading text-4xl font-bold sm:text-5xl leading-tight sm:text-6xl">
                     Find Wonder
                     <span class="block font-accent italic text-leaf">Where You Stand</span>
                 </h1>
@@ -42,7 +42,7 @@
             <p class="mt-5 max-w-lg text-lg text-gray-700">
                 Snap a photo, tag the plant part, confirm your location pin and match it to a plant profile. Every sighting stays pending until an expert reviews it.
             </p>
-            <a href="{{ route('sightings.create') }}" class="btn-primary mt-8 h-[54px] w-[295px] justify-between px-8 text-lg">
+            <a href="{{ route('identifications.create') }}" class="btn-primary mt-8 h-[54px] w-[295px] justify-between px-8 text-lg">
                 Open Scanner
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
             </a>

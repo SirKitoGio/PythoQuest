@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-heading text-4xl font-bold">Edit <span class="font-accent italic text-forest">{{ $plant->common_name }}</span></h2>
+        <h2 class="font-heading text-3xl font-bold sm:text-4xl">Edit <span class="font-accent italic text-forest">{{ $plant->common_name }}</span></h2>
     </x-slot>
 
     <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6">

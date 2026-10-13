@@ -1,7 +1,7 @@
 <x-site-layout title="About">
-    <section class="mx-auto max-w-6xl px-6 pt-16">
+    <section class="mx-auto max-w-6xl px-4 pt-8 sm:px-6 sm:pt-16">
         <p class="text-xl font-medium text-forest">About the system</p>
-        <h1 class="mt-2 font-heading text-5xl font-bold">PhytoQuest <span class="font-accent italic text-forest">in the field</span></h1>
+        <h1 class="mt-2 font-heading text-4xl font-bold sm:text-5xl">PhytoQuest <span class="font-accent italic text-forest">in the field</span></h1>
         <p class="mt-6 max-w-3xl text-lg text-gray-700">
             PhytoQuest is a responsive web application that supports the early fieldwork stage of botanical and pharmaceutical research.
             It joins plant search, GPS-confirmed sightings and source-backed plant profiles into a single research tool for pharmacy

@@ -6,20 +6,41 @@
     display: none !important;
 }
 
+@layer base {
+    html {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    /* iOS Safari zooms into any focused field below 16px; keep fields at 16px on phones. */
+    @media (max-width: 639px) {
+        input:not([type='checkbox']):not([type='radio']),
+        select,
+        textarea {
+            font-size: 16px;
+        }
+    }
+}
+
 @layer components {
     .btn-primary {
-        @apply inline-flex items-center justify-center gap-2 rounded-lg bg-forest px-5 py-2.5 text-sm font-medium text-cream transition hover:bg-forest-dark focus:outline-none focus:ring-2 focus:ring-leaf focus:ring-offset-2 focus:ring-offset-cream;
+        @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-forest px-5 py-2.5 text-sm font-medium text-cream transition hover:bg-forest-dark focus:outline-none focus:ring-2 focus:ring-leaf focus:ring-offset-2 focus:ring-offset-cream disabled:opacity-60;
     }
 
     .btn-secondary {
-        @apply inline-flex items-center justify-center gap-2 rounded-lg border border-forest/30 bg-sand px-5 py-2.5 text-sm font-medium text-forest transition hover:bg-leaf/30;
+        @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-forest/30 bg-sand px-5 py-2.5 text-sm font-medium text-forest transition hover:bg-leaf/30;
     }
 
     .card {
-        @apply rounded-xl bg-white/70 p-6 shadow-sm ring-1 ring-forest/10;
+        @apply rounded-xl bg-white/70 p-5 shadow-sm ring-1 ring-forest/10 sm:p-6;
     }
 
     .badge {
         @apply inline-block rounded-md bg-leaf/40 px-3 py-0.5 text-xs font-medium text-forest-dark;
+    }
+
+    /* Leaves room for the fixed mobile tab bar and the iPhone home indicator. */
+    .pb-tab-bar {
+        padding-bottom: calc(5rem + env(safe-area-inset-bottom));
     }
 }

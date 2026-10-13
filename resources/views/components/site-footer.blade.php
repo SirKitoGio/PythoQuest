@@ -1,9 +1,9 @@
-<footer class="mt-24 bg-forest text-cream">
-    <div class="mx-auto grid max-w-6xl gap-12 px-6 py-14 md:grid-cols-[auto_1fr_auto] md:gap-10">
-        <x-application-logo class="h-24 w-24 rounded-full ring-4 ring-leaf/40" />
+<footer class="mt-12 bg-forest text-cream sm:mt-24">
+    <div class="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[auto_1fr_auto] md:gap-10 md:py-14">
+        <x-application-logo class="h-14 w-14 rounded-full ring-4 ring-leaf/40 md:h-24 md:w-24" />
 
         <div>
-            <p class="font-heading text-3xl font-semibold">PhytoQuest</p>
+            <p class="font-heading text-2xl font-semibold md:text-3xl">PhytoQuest</p>
             <p class="mt-2 max-w-sm text-cream/80">A location-aware botanical research support system for students and field researchers.</p>
 
             <p class="mt-8 text-sm font-medium tracking-widest">CONTACT US</p>
@@ -27,7 +27,7 @@
             <p class="font-heading text-lg font-semibold tracking-wide">QUICK LINKS</p>
             <ul class="mt-4 space-y-3 text-cream/90">
                 <li><a href="{{ route('home') }}" class="hover:text-leaf">Home</a></li>
-                <li><a href="{{ route('sightings.create') }}" class="hover:text-leaf">Plant Scanner</a></li>
+                <li><a href="{{ route('identifications.create') }}" class="hover:text-leaf">Plant Scanner</a></li>
                 <li><a href="{{ route('home') }}#suggestions" class="hover:text-leaf">Today's Plant Suggestions</a></li>
                 <li><a href="{{ route('home') }}#categories" class="hover:text-leaf">Categories</a></li>
                 <li><a href="{{ route('home') }}#recent" class="hover:text-leaf">Recently Explored</a></li>

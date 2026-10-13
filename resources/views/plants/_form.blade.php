@@ -32,18 +32,43 @@
         <x-input-error :messages="$errors->get('source_label')" class="mt-2" />
     </div>
     <div>
+        <x-input-label for="family" value="Family" />
+        <x-text-input id="family" name="family" class="mt-1 block w-full" placeholder="e.g. Lamiaceae" :value="old('family', $plant->family)" />
+        <x-input-error :messages="$errors->get('family')" class="mt-2" />
+    </div>
+    <div>
+        <x-input-label for="conservation_status" value="Conservation status (IUCN)" />
+        <select id="conservation_status" name="conservation_status" class="{{ $field }}" required>
+            @foreach (\App\Models\Plant::CONSERVATION_STATUSES as $code => $label)
+                <option value="{{ $code }}" @selected(old('conservation_status', $plant->conservation_status) === $code)>{{ $code }} — {{ $label }}</option>
+            @endforeach
+        </select>
+        <p class="mt-1 text-xs text-gray-600">Vulnerable and above hide exact sighting locations from the public map.</p>
+        <x-input-error :messages="$errors->get('conservation_status')" class="mt-2" />
+    </div>
+    <div class="sm:col-span-2">
+        <x-input-label for="common_names" value="Other common names" />
+        <x-text-input id="common_names" name="common_names" class="mt-1 block w-full" placeholder="Comma separated" :value="old('common_names', $plant->common_names)" />
+        <x-input-error :messages="$errors->get('common_names')" class="mt-2" />
+    </div>
+    <div>
         <x-input-label for="habitat" value="Habitat" />
-        <x-text-input id="habitat" name="habitat" class="mt-1 block w-full" :value="old('habitat', $plant->habitat)" required />
+        <x-text-input id="habitat" name="habitat" class="mt-1 block w-full" :value="old('habitat', $plant->habitat)" />
         <x-input-error :messages="$errors->get('habitat')" class="mt-2" />
     </div>
     <div>
+        <x-input-label for="distribution" value="Distribution" />
+        <x-text-input id="distribution" name="distribution" class="mt-1 block w-full" :value="old('distribution', $plant->distribution)" />
+        <x-input-error :messages="$errors->get('distribution')" class="mt-2" />
+    </div>
+    <div>
         <x-input-label for="plant_parts" value="Plant parts studied" />
-        <x-text-input id="plant_parts" name="plant_parts" class="mt-1 block w-full" placeholder="leaf, bark, fruit" :value="old('plant_parts', $plant->plant_parts)" required />
+        <x-text-input id="plant_parts" name="plant_parts" class="mt-1 block w-full" placeholder="leaf, bark, fruit" :value="old('plant_parts', $plant->plant_parts)" />
         <x-input-error :messages="$errors->get('plant_parts')" class="mt-2" />
     </div>
     <div class="sm:col-span-2">
         <x-input-label for="physical_features" value="Physical features" />
-        <textarea id="physical_features" name="physical_features" rows="3" class="{{ $field }}" required>{{ old('physical_features', $plant->physical_features) }}</textarea>
+        <textarea id="physical_features" name="physical_features" rows="3" class="{{ $field }}">{{ old('physical_features', $plant->physical_features) }}</textarea>
         <x-input-error :messages="$errors->get('physical_features')" class="mt-2" />
     </div>
     <div>

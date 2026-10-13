@@ -33,7 +33,11 @@ class StoreSightingRequest extends FormRequest
             'plant_part' => ['required', Rule::in(Plant::PLANT_PARTS)],
             'visibility' => ['required', Rule::in(Sighting::VISIBILITIES)],
             'location_name' => ['nullable', 'string', 'max:255'],
-            'photo' => ['nullable', 'image', 'max:4096'],
+            'identification_id' => ['nullable', Rule::exists('identifications', 'id')->where('user_id', $this->user()->id)],
+            'photo' => [
+                $this->isMethod('post') ? 'required_without:identification_id' : 'nullable',
+                'image', 'mimes:jpg,jpeg,png,webp', 'max:8192',
+            ],
             'notes' => ['nullable', 'string', 'max:2000'],
         ];
     }

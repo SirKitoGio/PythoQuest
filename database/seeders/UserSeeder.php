@@ -12,11 +12,21 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        User::factory()->admin()->create([
+            'name' => 'Keith Alan Speirs',
+            'email' => 'keithalan.speirs25@gmail.com',
+        ]);
+
         User::factory()->create([
             'name' => 'Demo Researcher',
             'email' => 'demo@phytoquest.test',
         ]);
 
-        User::factory(9)->create();
+        User::factory()->reviewer()->create([
+            'name' => 'Demo Reviewer',
+            'email' => 'reviewer@phytoquest.test',
+        ]);
+
+        User::factory(7)->create();
     }
 }

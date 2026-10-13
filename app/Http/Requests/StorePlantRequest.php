@@ -14,7 +14,11 @@ class StorePlantRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user() !== null;
+        $plant = $this->route('plant');
+
+        return $plant
+            ? $this->user()?->can('update', $plant) ?? false
+            : $this->user()?->can('create', Plant::class) ?? false;
     }
 
     /**
@@ -26,11 +30,15 @@ class StorePlantRequest extends FormRequest
     {
         return [
             'common_name' => ['required', 'string', 'max:255'],
-            'scientific_name' => ['required', 'string', 'max:255'],
+            'scientific_name' => ['required', 'string', 'max:255', Rule::unique('plants')->ignore($this->route('plant'))],
+            'family' => ['nullable', 'string', 'max:255'],
+            'common_names' => ['nullable', 'string', 'max:2000'],
             'category' => ['required', Rule::in(Plant::CATEGORIES)],
-            'habitat' => ['required', 'string', 'max:255'],
-            'plant_parts' => ['required', 'string', 'max:255'],
-            'physical_features' => ['required', 'string', 'max:2000'],
+            'conservation_status' => ['required', Rule::in(array_keys(Plant::CONSERVATION_STATUSES))],
+            'habitat' => ['nullable', 'string', 'max:255'],
+            'distribution' => ['nullable', 'string', 'max:255'],
+            'plant_parts' => ['nullable', 'string', 'max:255'],
+            'physical_features' => ['nullable', 'string', 'max:2000'],
             'known_toxins' => ['nullable', 'string', 'max:2000'],
             'extract_types' => ['nullable', 'string', 'max:2000'],
             'source_label' => ['required', Rule::in(Plant::SOURCE_LABELS)],

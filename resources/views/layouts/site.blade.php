@@ -3,7 +3,7 @@
     <head>
         @include('layouts.partials.head')
     </head>
-    <body class="bg-cream font-sans text-gray-900 antialiased">
+    <body @class(["bg-cream font-sans text-gray-900 antialiased", "pb-tab-bar lg:pb-0" => auth()->check()])>
         <x-site-nav />
 
         @if (session('status'))
@@ -17,5 +17,8 @@
         </main>
 
         <x-site-footer />
+        @auth
+            <x-mobile-tab-bar />
+        @endauth
     </body>
 </html>
