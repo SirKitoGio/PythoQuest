@@ -89,17 +89,26 @@ def build_prompts(taxon: Taxon, plant_part: str) -> list[str]:
     if plant_part == DEFAULT_PLANT_PART:
         prompts.append(f"a photo of {taxon.family} {taxon.scientific_name}")
         prompts.append(f"a photo of {taxon.scientific_name}")
+        prompts.append(f"a botanical specimen photo of {taxon.scientific_name}")
+        prompts.append(f"a field photograph of {taxon.scientific_name} in nature")
+        prompts.append(f"a clear photo of {taxon.scientific_name} showing leaves and structure")
         if taxon.common_name:
             prompts.append(f"a photo of {taxon.common_name}, a plant of the {taxon.family} family")
             prompts.append(f"a photo of {taxon.common_name} ({taxon.scientific_name})")
             prompts.append(f"a photo of {taxon.common_name}")
+            if taxon.is_philippine:
+                prompts.append(f"a photo of {taxon.common_name}, a Philippine medicinal plant")
         for alias in taxon.aliases:
             if alias:
                 prompts.append(f"a photo of {alias} ({taxon.scientific_name})")
                 prompts.append(f"a photo of {alias}")
+                if taxon.is_philippine:
+                    prompts.append(f"a photo of {alias}, a plant found in the Philippines")
     else:
         prompts.append(f"a photo of the {plant_part} of {taxon.family} {taxon.scientific_name}")
         prompts.append(f"a photo of the {plant_part} of {taxon.scientific_name}")
+        prompts.append(f"a close-up photo of the {plant_part} of {taxon.scientific_name}")
+        prompts.append(f"macro photograph of the {plant_part} of {taxon.scientific_name}")
         if taxon.common_name:
             prompts.append(f"a photo of the {plant_part} of {taxon.common_name} ({taxon.scientific_name})")
             prompts.append(f"a photo of the {plant_part} of {taxon.common_name}")
@@ -276,10 +285,18 @@ class BioclipBackend(Backend):
         torch = self._torch
         with torch.no_grad():
             if self.use_tta:
+                from PIL import ImageOps
+
                 views = [image, image.transpose(Image.Transpose.FLIP_LEFT_RIGHT)]
                 w, h = image.size
-                if w >= 32 and h >= 32:
+                if w >= 48 and h >= 48:
                     views.append(image.crop((int(w * 0.05), int(h * 0.05), int(w * 0.95), int(h * 0.95))))
+                    views.append(image.crop((int(w * 0.10), int(h * 0.10), int(w * 0.90), int(h * 0.90))))
+                try:
+                    views.append(ImageOps.autocontrast(image, cutoff=1))
+                except Exception:
+                    pass
+
                 pixels = torch.stack([self.preprocess(v) for v in views]).to(self.device)
                 features = self.model.encode_image(pixels).float()
                 features = features / features.norm(dim=-1, keepdim=True)
@@ -299,22 +316,13 @@ class BioclipBackend(Backend):
         else:
             combined = text_sim
 
-        logits = self.logit_scale * combined
+        # Calibrated logit temperature scaling: avoids over-peaked softmax
+        scale = float(os.environ.get("ML_LOGIT_SCALE", min(self.logit_scale, 45.0)))
+        logits = scale * combined
         if hasattr(self, "_philippine_mask") and np.any(self._philippine_mask) and self.philippine_prior > 0:
             logits[self._philippine_mask] += self.philippine_prior
 
         return softmax(logits.astype(np.float64))
-
-        text_sim = self._text_embeddings[plant_part] @ image_emb
-        if np.any(self._proto_mask):
-            proto_sim = self._proto_matrix @ image_emb
-            combined = blend_similarities(text_sim, proto_sim, self._proto_mask, self.visual_weight)
-        else:
-            combined = text_sim
-
-        logits = self.logit_scale * combined
-        return softmax(logits.astype(np.float64))
-
 
 
 def make_backend(name: str | None = None) -> Backend:

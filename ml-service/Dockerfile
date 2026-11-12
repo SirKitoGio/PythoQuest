@@ -22,6 +22,7 @@ RUN uv sync --frozen --no-dev --no-install-project
 
 COPY --chown=app app ./app
 COPY --chown=app data ./data
+COPY --chown=app scripts ./scripts
 
 # Bake the model weights and the catalogue's text embeddings into the image so a
 # sleeping Space or a restarted container is ready in seconds, not minutes.
