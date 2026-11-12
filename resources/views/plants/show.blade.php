@@ -25,23 +25,40 @@
                     @include('plants._media-actions')
                 </div>
 
-                <dl class="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-6">
-                    @foreach (array_filter([
-                        'Habitat' => $plant->habitat,
-                        'Distribution' => $plant->distribution,
-                        'Plant parts studied' => $plant->plant_parts,
-                        'Physical features' => $plant->physical_features,
-                        'Growing conditions' => $plant->care_requirements,
-                        'USDA hardiness zones' => $plant->hardiness_zones,
-                        'Documented extract types' => $plant->extract_types,
-                        'Research reference' => $plant->reference,
-                    ]) as $label => $value)
-                        <div class="card bg-sand">
-                            <dt class="text-xs font-semibold uppercase tracking-wider text-forest">{{ $label }}</dt>
-                            <dd class="mt-2 text-gray-800">{{ $value }}</dd>
-                        </div>
-                    @endforeach
-                </dl>
+                @php($descriptionCards = array_filter([
+                    'Habitat' => $plant->habitat,
+                    'Distribution' => $plant->distribution,
+                    'Plant parts studied' => $plant->plant_parts,
+                    'Physical features' => $plant->physical_features,
+                    'Growing conditions' => $plant->care_requirements,
+                    'USDA hardiness zones' => $plant->hardiness_zones,
+                    'Documented extract types' => $plant->extract_types,
+                    'Research reference' => $plant->reference,
+                ]))
+
+                <div class="mt-8 sm:mt-10" x-data="{
+                    cards: @js(array_map(fn ($key) => in_array($key, ['Habitat', 'Distribution'], true), array_combine(array_keys($descriptionCards), array_keys($descriptionCards)))),
+                    get allOpen() { return Object.values(this.cards).every(Boolean); },
+                    toggleAll() { const open = ! this.allOpen; Object.keys(this.cards).forEach((key) => this.cards[key] = open); },
+                }">
+                    <div class="mb-3 flex justify-end">
+                        <button type="button" @click="toggleAll()" class="text-xs font-medium text-forest hover:underline" x-text="allOpen ? 'Collapse all' : 'Expand all'"></button>
+                    </div>
+                    <dl class="grid items-start gap-3 sm:grid-cols-2 sm:gap-6">
+                        @foreach ($descriptionCards as $label => $value)
+                            <div class="card bg-sand p-0">
+                                <dt>
+                                    <button type="button" @click="cards[@js($label)] = ! cards[@js($label)]" :aria-expanded="cards[@js($label)]"
+                                        class="flex w-full items-center justify-between gap-3 px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-forest">
+                                        <span>{{ $label }}</span>
+                                        <svg class="h-4 w-4 shrink-0 transition-transform" :class="cards[@js($label)] && 'rotate-180'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                    </button>
+                                </dt>
+                                <dd x-show="cards[@js($label)]" x-transition.opacity class="px-6 pb-5 text-gray-800">{{ $value }}</dd>
+                            </div>
+                        @endforeach
+                    </dl>
+                </div>
 
                 <div @class([
                     'card mt-6 flex gap-4',

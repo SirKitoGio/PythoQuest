@@ -7,6 +7,9 @@
         gpsError: '',
         accuracy: null,
         pin: null,
+        autoName: '',
+        nameRequest: 0,
+        nameTimer: null,
         preview: @js($sighting->photoUrl()),
         init() {
             const lat = parseFloat(this.$refs.lat.value);
@@ -14,14 +17,33 @@
             this.pin = pinPicker(this.$refs.pinMap, {
                 latitude: Number.isFinite(lat) ? lat : null,
                 longitude: Number.isFinite(lng) ? lng : null,
-                onMove: (latitude, longitude) => { this.$refs.lat.value = latitude; this.$refs.lng.value = longitude; this.accuracy = null; this.gpsError = ''; },
+                onMove: (latitude, longitude) => { this.$refs.lat.value = latitude; this.$refs.lng.value = longitude; this.accuracy = null; this.gpsError = ''; this.fillLocationName(latitude, longitude); },
             });
-            if (! Number.isFinite(lat)) { this.locate(); }
+            if (! Number.isFinite(lat)) { this.locate(); } else { this.fillLocationName(lat, lng); }
+        },
+        fillLocationName(lat, lng) {
+            clearTimeout(this.nameTimer);
+            this.nameTimer = setTimeout(() => this.lookupLocationName(lat, lng), 800);
+        },
+        async lookupLocationName(lat, lng, attempt = 0) {
+            const input = document.getElementById('location_name');
+            if (! input || (input.value.trim() !== '' && input.value !== this.autoName)) { return; }
+            const request = ++this.nameRequest;
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=18&lat=${lat}&lon=${lng}`, { headers: { Accept: 'application/json' } });
+                if (! response.ok) { throw new Error('geocoder busy'); }
+                const place = await response.json();
+                if (request !== this.nameRequest || ! place.display_name) { return; }
+                const name = place.name || place.display_name.split(', ').slice(0, 3).join(', ');
+                if (input.value.trim() === '' || input.value === this.autoName) {
+                    input.value = this.autoName = name;
+                }
+            } catch (error) { if (attempt < 2 && request === this.nameRequest) { setTimeout(() => this.lookupLocationName(lat, lng, attempt + 1), 1500); } }
         },
         syncPin() {
             const lat = parseFloat(this.$refs.lat.value);
             const lng = parseFloat(this.$refs.lng.value);
-            if (Number.isFinite(lat) && Number.isFinite(lng)) { this.pin.setPosition(lat, lng); }
+            if (Number.isFinite(lat) && Number.isFinite(lng)) { this.pin.setPosition(lat, lng); this.fillLocationName(lat, lng); }
         },
         locate() {
             if (! navigator.geolocation) { this.gpsError = 'This browser does not support GPS.'; return; }
@@ -33,6 +55,7 @@
                     this.$refs.lng.value = pos.coords.longitude.toFixed(7);
                     this.accuracy = Math.round(pos.coords.accuracy);
                     this.pin.setPosition(pos.coords.latitude, pos.coords.longitude);
+                    this.fillLocationName(pos.coords.latitude, pos.coords.longitude);
                     this.locating = false;
                 },
                 (err) => {

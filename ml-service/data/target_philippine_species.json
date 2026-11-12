@@ -1,0 +1,1017 @@
+[
+  {
+    "scientific_name": "Vitex negundo",
+    "family": "Verbenaceae",
+    "common_name": "Lagundi"
+  },
+  {
+    "scientific_name": "Blumea balsamifera",
+    "family": "Asteraceae",
+    "common_name": "Sambong"
+  },
+  {
+    "scientific_name": "Carmona retusa",
+    "family": "Boraginaceae",
+    "common_name": "Tsaang Gubat"
+  },
+  {
+    "scientific_name": "Combretum indicum",
+    "family": "Combretaceae",
+    "common_name": "Niyog-niyogan"
+  },
+  {
+    "scientific_name": "Senna alata",
+    "family": "Fabaceae",
+    "common_name": "Akapulko"
+  },
+  {
+    "scientific_name": "Psidium guajava",
+    "family": "Myrtaceae",
+    "common_name": "Bayabas"
+  },
+  {
+    "scientific_name": "Peperomia pellucida",
+    "family": "Piperaceae",
+    "common_name": "Ulasimang Bato"
+  },
+  {
+    "scientific_name": "Allium sativum",
+    "family": "Alliaceae",
+    "common_name": "Bawang"
+  },
+  {
+    "scientific_name": "Momordica charantia",
+    "family": "Cucurbitaceae",
+    "common_name": "Ampalaya"
+  },
+  {
+    "scientific_name": "Mentha cordifolia",
+    "family": "Lamiaceae",
+    "common_name": "Yerba Buena"
+  },
+  {
+    "scientific_name": "Moringa oleifera",
+    "family": "Moringaceae",
+    "common_name": "Malunggay"
+  },
+  {
+    "scientific_name": "Lagerstroemia speciosa",
+    "family": "Lythraceae",
+    "common_name": "Banaba"
+  },
+  {
+    "scientific_name": "Azadirachta indica",
+    "family": "Meliaceae",
+    "common_name": "Neem"
+  },
+  {
+    "scientific_name": "Coleus amboinicus",
+    "family": "Lamiaceae",
+    "common_name": "Oregano"
+  },
+  {
+    "scientific_name": "Euphorbia hirta",
+    "family": "Euphorbiaceae",
+    "common_name": "Tawa-tawa"
+  },
+  {
+    "scientific_name": "Andrographis paniculata",
+    "family": "Acanthaceae",
+    "common_name": "Serpentina"
+  },
+  {
+    "scientific_name": "Annona muricata",
+    "family": "Annonaceae",
+    "common_name": "Guyabano"
+  },
+  {
+    "scientific_name": "Centella asiatica",
+    "family": "Apiaceae or Umbelliferae",
+    "common_name": "Takip-kuhol"
+  },
+  {
+    "scientific_name": "Tinospora crispa",
+    "family": "Menispermaceae",
+    "common_name": "Makabuhay"
+  },
+  {
+    "scientific_name": "Pandanus amaryllifolius",
+    "family": "Pandanaceae",
+    "common_name": "Pandan"
+  },
+  {
+    "scientific_name": "Pterocarpus indicus",
+    "family": "Fabaceae",
+    "common_name": "Amboyna"
+  },
+  {
+    "scientific_name": "Jasminum sambac",
+    "family": "Oleaceae",
+    "common_name": "Jasmine Tea"
+  },
+  {
+    "scientific_name": "Hibiscus rosa-sinensis",
+    "family": "Malvaceae",
+    "common_name": "Chinese Hibiscus"
+  },
+  {
+    "scientific_name": "Mangifera indica",
+    "family": "Anacardiaceae",
+    "common_name": "Mango"
+  },
+  {
+    "scientific_name": "Carica papaya",
+    "family": "Caricaceae",
+    "common_name": "Papaya"
+  },
+  {
+    "scientific_name": "Cocos nucifera",
+    "family": "Arecaceae",
+    "common_name": "Coconut Palm"
+  },
+  {
+    "scientific_name": "Musa acuminata",
+    "family": "Musaceae",
+    "common_name": "Dwarf Banana"
+  },
+  {
+    "scientific_name": "Terminalia catappa",
+    "family": "Combretaceae",
+    "common_name": "Indian Almond"
+  },
+  {
+    "scientific_name": "Averrhoa carambola",
+    "family": "Oxalidaceae",
+    "common_name": "Carambola"
+  },
+  {
+    "scientific_name": "Mimosa pudica",
+    "family": "Fabaceae",
+    "common_name": "Morivivir"
+  },
+  {
+    "scientific_name": "Ipomoea aquatica",
+    "family": "Convolvulaceae",
+    "common_name": "Kangkong"
+  },
+  {
+    "scientific_name": "Zingiber officinale",
+    "family": "Zingiberaceae",
+    "common_name": "Ginger: Common"
+  },
+  {
+    "scientific_name": "Sesbania grandiflora",
+    "family": "Fabaceae",
+    "common_name": "Vegetable Hummingbird"
+  },
+  {
+    "scientific_name": "Artemisia vulgaris",
+    "family": "Asteraceae or Compositae",
+    "common_name": "Mugwort"
+  },
+  {
+    "scientific_name": "Lantana camara",
+    "family": "Verbenaceae",
+    "common_name": "Wild Sage"
+  },
+  {
+    "scientific_name": "Basella alba",
+    "family": "Basellaceae",
+    "common_name": "Malabar Spinach"
+  },
+  {
+    "scientific_name": "Corchorus olitorius",
+    "family": "Tiliaceae",
+    "common_name": "Jew's Mallow"
+  },
+  {
+    "scientific_name": "Casuarina equisetifolia",
+    "family": "Casuarinaceae",
+    "common_name": "She Oak"
+  },
+  {
+    "scientific_name": "Dimocarpus longan",
+    "family": "Sapindaceae",
+    "common_name": "Longan"
+  },
+  {
+    "scientific_name": "Nephelium lappaceum",
+    "family": "Sapindaceae",
+    "common_name": "Rambutan"
+  },
+  {
+    "scientific_name": "Gmelina arborea",
+    "family": "Lamiaceae",
+    "common_name": "Gmelina"
+  },
+  {
+    "scientific_name": "Bidens tripartita",
+    "family": "Asteraceae or Compositae",
+    "common_name": "Burr Marigold"
+  },
+  {
+    "scientific_name": "Hemiphragma heterophyllum",
+    "family": "Scrophulariaceae",
+    "common_name": "Hemiphragma heterophyllum"
+  },
+  {
+    "scientific_name": "Rubia cordifolia",
+    "family": "Rubiaceae",
+    "common_name": "Indian Madder"
+  },
+  {
+    "scientific_name": "Capparis spinosa",
+    "family": "Capparidaceae",
+    "common_name": "Caper"
+  },
+  {
+    "scientific_name": "Celastrus dependens",
+    "family": "Celastraceae",
+    "common_name": "Celastrus dependens"
+  },
+  {
+    "scientific_name": "Rosa wichuraiana",
+    "family": "Rosaceae",
+    "common_name": "Memorial Rosa"
+  },
+  {
+    "scientific_name": "Eleutherococcus trifoliatus",
+    "family": "Araliaceae",
+    "common_name": "Eleutherococcus trifoliatus"
+  },
+  {
+    "scientific_name": "Orthosiphon aristatus",
+    "family": "Lamiaceae",
+    "common_name": "Java Tea"
+  },
+  {
+    "scientific_name": "Lespedeza cuneata",
+    "family": "Fabaceae or Leguminosae",
+    "common_name": "Chinese Lespedeza"
+  },
+  {
+    "scientific_name": "Polygonum orientale",
+    "family": "Polygonaceae",
+    "common_name": "Prince's Feather"
+  },
+  {
+    "scientific_name": "Bidens biternata",
+    "family": "Asteraceae or Compositae",
+    "common_name": "Bidens biternata"
+  },
+  {
+    "scientific_name": "Pteridium aquilinum",
+    "family": "Polypodiaceae",
+    "common_name": "Bracken"
+  },
+  {
+    "scientific_name": "Eleocharis dulcis",
+    "family": "Cyperaceae",
+    "common_name": "Chinese Water Chestnut"
+  },
+  {
+    "scientific_name": "Skimmia japonica",
+    "family": "Rutaceae",
+    "common_name": "Japanese Skimmia"
+  },
+  {
+    "scientific_name": "Hydrilla verticillata",
+    "family": "Hydrocharitaceae",
+    "common_name": "Hydrilla"
+  },
+  {
+    "scientific_name": "Typha orientalis",
+    "family": "Typhaceae",
+    "common_name": "Broadleaf Cumbungi"
+  },
+  {
+    "scientific_name": "Lycopodium serratum",
+    "family": "Lycopodiaceae",
+    "common_name": "Club Moss"
+  },
+  {
+    "scientific_name": "Musa balbisiana",
+    "family": "Musaceae",
+    "common_name": "Plantain"
+  },
+  {
+    "scientific_name": "Vitis flexuosa",
+    "family": "Vitaceae",
+    "common_name": "Vitis flexuosa"
+  },
+  {
+    "scientific_name": "Zanthoxylum nitidum",
+    "family": "Rutaceae",
+    "common_name": "Zanthoxylum nitidum"
+  },
+  {
+    "scientific_name": "Nephelium ramboutan-ake",
+    "family": "Sapindaceae",
+    "common_name": "Pulasan"
+  },
+  {
+    "scientific_name": "Antidesma bunius",
+    "family": "Phyllanthaceae",
+    "common_name": "Bignay"
+  },
+  {
+    "scientific_name": "Bombax ceiba",
+    "family": "Malvaceae",
+    "common_name": "Red Silk Cotton Tree"
+  },
+  {
+    "scientific_name": "Litchi chinensis",
+    "family": "Sapindaceae",
+    "common_name": "Lychee"
+  },
+  {
+    "scientific_name": "Morinda citrifolia",
+    "family": "Rubiaceae",
+    "common_name": "Noni"
+  },
+  {
+    "scientific_name": "Sauropus androgynus",
+    "family": "Phyllanthaceae",
+    "common_name": "Sweet Leaf"
+  },
+  {
+    "scientific_name": "Diplazium esculentum",
+    "family": "Athyriaceae",
+    "common_name": "Vegetable Fern"
+  },
+  {
+    "scientific_name": "Curculigo orchioides",
+    "family": "Hypoxidaceae",
+    "common_name": "Star grass"
+  },
+  {
+    "scientific_name": "Paederia foetida",
+    "family": "Rubiaceae",
+    "common_name": "Skunk Vine"
+  },
+  {
+    "scientific_name": "Achyranthes bidentata",
+    "family": "Amaranthaceae",
+    "common_name": "Niu Xi"
+  },
+  {
+    "scientific_name": "Artemisia capillaris",
+    "family": "Asteraceae or Compositae",
+    "common_name": "Yin Chen Hao"
+  },
+  {
+    "scientific_name": "Arenaria serpyllifolia",
+    "family": "Caryophyllaceae",
+    "common_name": "Thyme-Leaf Sandwort"
+  },
+  {
+    "scientific_name": "Desmodium styracifolium",
+    "family": "Fabaceae or Leguminosae",
+    "common_name": "Guang Jing Qian Cao"
+  },
+  {
+    "scientific_name": "Drosera peltata",
+    "family": "Droseraceae",
+    "common_name": "Sundew"
+  },
+  {
+    "scientific_name": "Ilex asprella",
+    "family": "Aquifoliaceae",
+    "common_name": "Ilex asprella"
+  },
+  {
+    "scientific_name": "Sporobolus indicus",
+    "family": "Poaceae or Gramineae",
+    "common_name": "Smut Grass"
+  },
+  {
+    "scientific_name": "Paederia scandens",
+    "family": "Rubiaceae",
+    "common_name": "Paederia scandens"
+  },
+  {
+    "scientific_name": "Trichosanthes ovigera",
+    "family": "Cucurbitaceae",
+    "common_name": "Japanese Snake Gourd"
+  },
+  {
+    "scientific_name": "Musa x paradisiaca",
+    "family": "Musaceae",
+    "common_name": "Banana"
+  },
+  {
+    "scientific_name": "Eupatorium lindleyanum",
+    "family": "Asteraceae or Compositae",
+    "common_name": "Eupatorium lindleyanum"
+  },
+  {
+    "scientific_name": "Cleome gynandra",
+    "family": "Capparidaceae",
+    "common_name": "African Spider Flower"
+  },
+  {
+    "scientific_name": "Canarium luzonicum",
+    "family": "Burseraceae",
+    "common_name": "Manila Elemi"
+  },
+  {
+    "scientific_name": "Crotalaria sessiliflora",
+    "family": "Fabaceae or Leguminosae",
+    "common_name": "Crotalaria sessiliflora"
+  },
+  {
+    "scientific_name": "Hydrocotyle sibthorpioides",
+    "family": "Apiaceae or Umbelliferae",
+    "common_name": "Water Pennywort"
+  },
+  {
+    "scientific_name": "Youngia japonica",
+    "family": "Asteraceae or Compositae",
+    "common_name": "Japanese Hawkweed"
+  },
+  {
+    "scientific_name": "Citrus aurantiifolia",
+    "family": "Rutaceae",
+    "common_name": "Lime"
+  },
+  {
+    "scientific_name": "Fagraea fragrans",
+    "family": "Gentianaceae",
+    "common_name": "Ironwood"
+  },
+  {
+    "scientific_name": "Oldenlandia diffusa",
+    "family": "Rubiaceae",
+    "common_name": "Snake-Needle Grass"
+  },
+  {
+    "scientific_name": "Buddleia asiatica",
+    "family": "Buddleiaceae",
+    "common_name": "Bai Bei Feng"
+  },
+  {
+    "scientific_name": "Centipeda minima",
+    "family": "Asteraceae or Compositae",
+    "common_name": "Spreading Sneeze Weed"
+  },
+  {
+    "scientific_name": "Duchesnea indica",
+    "family": "Rosaceae",
+    "common_name": "Mock Strawberry"
+  },
+  {
+    "scientific_name": "Pueraria phaseoloides",
+    "family": "Fabaceae or Leguminosae",
+    "common_name": "Tropical Kudzu"
+  },
+  {
+    "scientific_name": "Sambucus javanica",
+    "family": "Caprifoliaceae",
+    "common_name": "Chinese Elder"
+  },
+  {
+    "scientific_name": "Triphasia trifolia",
+    "family": "Rutaceae",
+    "common_name": "Lime Berry"
+  },
+  {
+    "scientific_name": "Alocasia macrorrhizos",
+    "family": "Araceae",
+    "common_name": "Giant Taro"
+  },
+  {
+    "scientific_name": "Artocarpus altilis",
+    "family": "Moraceae",
+    "common_name": "Breadfruit"
+  },
+  {
+    "scientific_name": "Dioscorea bulbifera",
+    "family": "Dioscoreaceae",
+    "common_name": "Aerial Yam"
+  },
+  {
+    "scientific_name": "Entada phaseoloides",
+    "family": "Fabaceae",
+    "common_name": "St. Thomas Bean"
+  },
+  {
+    "scientific_name": "Erythrina fusca",
+    "family": "Fabaceae",
+    "common_name": "Coral Bean"
+  },
+  {
+    "scientific_name": "Ophioglossum reticulatum",
+    "family": "Ophioglossaceae",
+    "common_name": "Adder's tongue fern"
+  },
+  {
+    "scientific_name": "Sonneratia caseolaris",
+    "family": "Lythraceae",
+    "common_name": "Firefly mangrove"
+  },
+  {
+    "scientific_name": "Tacca leontopetaloides",
+    "family": "Taccaceae",
+    "common_name": "Polynesian Arrowroot"
+  },
+  {
+    "scientific_name": "Thespesia populnea",
+    "family": "Malvaceae",
+    "common_name": "Portia Tree"
+  },
+  {
+    "scientific_name": "Trapa natans",
+    "family": "Trapaceae",
+    "common_name": "Water Chestnut"
+  },
+  {
+    "scientific_name": "Geodorum densiflorum",
+    "family": "Orchidaceae",
+    "common_name": "Nodding Swamp Orchid"
+  },
+  {
+    "scientific_name": "Reutealis trisperma",
+    "family": "Euphorbiaceae",
+    "common_name": "Otaheite Walnut"
+  },
+  {
+    "scientific_name": "Zanthoxylum ailanthoides",
+    "family": "Rutaceae",
+    "common_name": "Zanthoxylum ailanthoides"
+  },
+  {
+    "scientific_name": "Areca catechu",
+    "family": "Arecaceae",
+    "common_name": "Betel Palm"
+  },
+  {
+    "scientific_name": "Corypha utan",
+    "family": "Arecaceae",
+    "common_name": "Gebang Palm. Corypha palm"
+  },
+  {
+    "scientific_name": "Dipterocarpus alatus",
+    "family": "Dipterocarpaceae",
+    "common_name": "Apitong"
+  },
+  {
+    "scientific_name": "Ceratophyllum demersum",
+    "family": "Ceratophyllaceae",
+    "common_name": "Hornwort"
+  },
+  {
+    "scientific_name": "Emilia sonchifolia",
+    "family": "Asteraceae or Compositae",
+    "common_name": "Cupid's Shaving Brush"
+  },
+  {
+    "scientific_name": "Piper sarmentosum",
+    "family": "Piperaceae",
+    "common_name": "Betel Leaf"
+  },
+  {
+    "scientific_name": "Senecio scandens",
+    "family": "Asteraceae or Compositae",
+    "common_name": "Senecio scandens"
+  },
+  {
+    "scientific_name": "Senna tora",
+    "family": "Fabaceae or Leguminosae",
+    "common_name": "Stinking Cassia"
+  },
+  {
+    "scientific_name": "Gnetum gnemon",
+    "family": "Gnetaceae",
+    "common_name": "Jointfir"
+  },
+  {
+    "scientific_name": "Peltophorum pterocarpum",
+    "family": "Fabaceae",
+    "common_name": "Copperpod"
+  },
+  {
+    "scientific_name": "Talipariti tiliaceum",
+    "family": "Malvaceae",
+    "common_name": "Beach Hibiscus"
+  },
+  {
+    "scientific_name": "Plectranthus rotundifolius",
+    "family": "Lamiaceae",
+    "common_name": "Chinese Potato"
+  },
+  {
+    "scientific_name": "Phyla nodiflora",
+    "family": "Verbenaceae",
+    "common_name": "Frogfruit"
+  },
+  {
+    "scientific_name": "Polygonum barbatum",
+    "family": "Polygonaceae",
+    "common_name": "Joint Weed"
+  },
+  {
+    "scientific_name": "Paraderris elliptica",
+    "family": "Fabaceae",
+    "common_name": "Derris"
+  },
+  {
+    "scientific_name": "Crinum asiaticum",
+    "family": "Amaryllidaceae",
+    "common_name": "Asian Poison Bulb"
+  },
+  {
+    "scientific_name": "Polygonum nepalense",
+    "family": "Polygonaceae",
+    "common_name": "Nepalese smartweed"
+  },
+  {
+    "scientific_name": "Cissus quadrangularis",
+    "family": "Vitaceae",
+    "common_name": "Veldt Grape"
+  },
+  {
+    "scientific_name": "Vitex pinnata",
+    "family": "Lamiaceae",
+    "common_name": "Keleban"
+  },
+  {
+    "scientific_name": "Caesalpinia decapetala",
+    "family": "Fabaceae or Leguminosae",
+    "common_name": "Mysore Thorn"
+  },
+  {
+    "scientific_name": "Gynura procumbens",
+    "family": "Compositae",
+    "common_name": "Longevity Spinach"
+  },
+  {
+    "scientific_name": "Indigofera decora",
+    "family": "Fabaceae or Leguminosae",
+    "common_name": "Chinese indigo"
+  },
+  {
+    "scientific_name": "Lonicera henryi",
+    "family": "Caprifoliaceae",
+    "common_name": "Lonicera henryi"
+  },
+  {
+    "scientific_name": "Pistacia chinensis",
+    "family": "Pistaciaceae",
+    "common_name": "Chinese Pistache"
+  },
+  {
+    "scientific_name": "Viola diffusa",
+    "family": "Violaceae",
+    "common_name": "Viola diffusa"
+  },
+  {
+    "scientific_name": "Scirpus validus",
+    "family": "Cyperaceae",
+    "common_name": "River Club-Rush"
+  },
+  {
+    "scientific_name": "Selaginella tamariscina",
+    "family": "Selaginellaceae",
+    "common_name": "Selaginella tamariscina"
+  },
+  {
+    "scientific_name": "Miscanthus sinensis",
+    "family": "Poaceae or Gramineae",
+    "common_name": "Eulalia"
+  },
+  {
+    "scientific_name": "Polygonum perfoliatum",
+    "family": "Polygonaceae",
+    "common_name": "Asiatic tearthumb"
+  },
+  {
+    "scientific_name": "Polypodium lineare",
+    "family": "Polypodiaceae",
+    "common_name": "Polypodium lineare"
+  },
+  {
+    "scientific_name": "Rubus moluccanus",
+    "family": "Rosaceae",
+    "common_name": "Ceylon Blackberry"
+  },
+  {
+    "scientific_name": "Gnaphalium japonicum",
+    "family": "Asteraceae or Compositae",
+    "common_name": "Gnaphalium japonicum"
+  },
+  {
+    "scientific_name": "Osbeckia chinensis",
+    "family": "Melastomataceae",
+    "common_name": "Osbeckia chinensis"
+  },
+  {
+    "scientific_name": "Acalypha australis",
+    "family": "Euphorbiaceae",
+    "common_name": "Asian copperleaf"
+  },
+  {
+    "scientific_name": "Ardisia crenata",
+    "family": "Primulaceae",
+    "common_name": "Coralberry"
+  },
+  {
+    "scientific_name": "Cyperus distans",
+    "family": "Cyperaceae",
+    "common_name": "Slender Cyperus"
+  },
+  {
+    "scientific_name": "Hypericum japonicum",
+    "family": "Hypericaceae",
+    "common_name": "Matted St. John's Wort"
+  },
+  {
+    "scientific_name": "Pueraria pseudohirsuta",
+    "family": "Fabaceae or Leguminosae",
+    "common_name": "Tropical kudzu"
+  },
+  {
+    "scientific_name": "Maclura cochinchinensis",
+    "family": "Moraceae",
+    "common_name": "Cockspur Thorn"
+  },
+  {
+    "scientific_name": "Peucedanum japonicum",
+    "family": "Apiaceae or Umbelliferae",
+    "common_name": "Peucedanum japonicum"
+  },
+  {
+    "scientific_name": "Citrus hystrix",
+    "family": "Rutaceae",
+    "common_name": "Kaffir Lime"
+  },
+  {
+    "scientific_name": "Albizia procera",
+    "family": "Fabaceae",
+    "common_name": "White Siris"
+  },
+  {
+    "scientific_name": "Intsia bijuga",
+    "family": "Fabaceae",
+    "common_name": "Moluccan Ironwood"
+  },
+  {
+    "scientific_name": "Podocarpus neriifolius",
+    "family": "Podocarpaceae",
+    "common_name": "Oleander Podocarp"
+  },
+  {
+    "scientific_name": "Rhodomyrtus tomentosa",
+    "family": "Myrtaceae",
+    "common_name": "Ceylon Hill Gooseberry"
+  },
+  {
+    "scientific_name": "Nageia wallichiana",
+    "family": "Podocarpaceae",
+    "common_name": "Nageia"
+  },
+  {
+    "scientific_name": "Adenanthera pavonina",
+    "family": "Fabaceae",
+    "common_name": "Red Sandalwood"
+  },
+  {
+    "scientific_name": "Amorphophallus paeoniifolius",
+    "family": "Araceae",
+    "common_name": "Elephant Yam"
+  },
+  {
+    "scientific_name": "Asparagus cochinchinensis",
+    "family": "Asparagaceae",
+    "common_name": "Chinese Asparagus"
+  },
+  {
+    "scientific_name": "Ocimum basilicum",
+    "family": "Lamiaceae or Labiatae",
+    "common_name": "Sweet Basil"
+  },
+  {
+    "scientific_name": "Ophiopogon japonicus",
+    "family": "Convallariaceae",
+    "common_name": "Snake's Beard"
+  },
+  {
+    "scientific_name": "Zanthoxylum planispinum",
+    "family": "Rutaceae",
+    "common_name": "Winged Prickly Ash"
+  },
+  {
+    "scientific_name": "Cananga odorata",
+    "family": "Annonaceae",
+    "common_name": "Ylang Ylang"
+  },
+  {
+    "scientific_name": "Pongamia pinnata",
+    "family": "Fabaceae",
+    "common_name": "Pongam"
+  },
+  {
+    "scientific_name": "Boenninghausenia albiflora",
+    "family": "Rutaceae",
+    "common_name": "Boenninghausenia albiflora"
+  },
+  {
+    "scientific_name": "Imperata cylindrica",
+    "family": "Poaceae or Gramineae",
+    "common_name": "Cogongrass"
+  },
+  {
+    "scientific_name": "Oenanthe javanica",
+    "family": "Apiaceae or Umbelliferae",
+    "common_name": "Water Dropwort"
+  },
+  {
+    "scientific_name": "Pueraria montana",
+    "family": "Fabaceae",
+    "common_name": "Kudzu Vine"
+  },
+  {
+    "scientific_name": "Mazus pumilus",
+    "family": "Scrophulariaceae",
+    "common_name": "Japanese mazus"
+  },
+  {
+    "scientific_name": "Photinia serratifolia",
+    "family": "Rosaceae",
+    "common_name": "Taiwanese photinia"
+  },
+  {
+    "scientific_name": "Bacopa monnieri",
+    "family": "Plantaginaceae",
+    "common_name": "Herb of Grace"
+  },
+  {
+    "scientific_name": "Trapa bicornis",
+    "family": "Trapaceae",
+    "common_name": "Ling"
+  },
+  {
+    "scientific_name": "Toona ciliata",
+    "family": "Meliaceae",
+    "common_name": "Mountain Cedar"
+  },
+  {
+    "scientific_name": "Mimusops elengi",
+    "family": "Sapotaceae",
+    "common_name": "Spanish Cherry"
+  },
+  {
+    "scientific_name": "Aquilaria malaccensis",
+    "family": "Thymelaeaceae",
+    "common_name": "Agar Wood"
+  },
+  {
+    "scientific_name": "Tectona grandis",
+    "family": "Lamiaceae",
+    "common_name": "Teak"
+  },
+  {
+    "scientific_name": "Trema orientalis",
+    "family": "Cannabaceae",
+    "common_name": "Charcoal Tree"
+  },
+  {
+    "scientific_name": "Justicia procumbens",
+    "family": "Acanthaceae",
+    "common_name": "Justicia procumbens"
+  },
+  {
+    "scientific_name": "Canarium ovatum",
+    "family": "Burseraceae",
+    "common_name": "Pili Nut"
+  },
+  {
+    "scientific_name": "Embelia ribes",
+    "family": "Primulaceae",
+    "common_name": "False black pepper"
+  },
+  {
+    "scientific_name": "Sagittaria trifolia",
+    "family": "Alismataceae",
+    "common_name": "Chinese Arrowroot"
+  },
+  {
+    "scientific_name": "Cassia sieberiana",
+    "family": "Fabaceae",
+    "common_name": "West African Laburnum"
+  },
+  {
+    "scientific_name": "Thespesia populneoides",
+    "family": "Malvaceae",
+    "common_name": "Tulip Tree; Portia Tree; Pacific Rosewood"
+  },
+  {
+    "scientific_name": "Abelmoschus esculentus",
+    "family": "Malvaceae",
+    "common_name": "Okra"
+  },
+  {
+    "scientific_name": "Acorus gramineus",
+    "family": "Araceae",
+    "common_name": "Grass-leaved Sweet Rush"
+  },
+  {
+    "scientific_name": "Cucumis melo",
+    "family": "Cucurbitaceae",
+    "common_name": "Melon"
+  },
+  {
+    "scientific_name": "Abelmoschus moschatus",
+    "family": "Malvaceae",
+    "common_name": "Musk Mallow"
+  },
+  {
+    "scientific_name": "Aleurites moluccanus",
+    "family": "Euphorbiaceae",
+    "common_name": "Candle Nut"
+  },
+  {
+    "scientific_name": "Boerhavia diffusa",
+    "family": "Nyctaginaceae",
+    "common_name": "Tar Vine"
+  },
+  {
+    "scientific_name": "Cardiospermum halicacabum",
+    "family": "Sapindaceae",
+    "common_name": "Heart Seed"
+  },
+  {
+    "scientific_name": "Cyperus rotundus",
+    "family": "Cyperaceae",
+    "common_name": "Nut Grass"
+  },
+  {
+    "scientific_name": "Nypa fruticans",
+    "family": "Arecaceae",
+    "common_name": "Nipa Palm"
+  },
+  {
+    "scientific_name": "Gnaphalium luteoalbum",
+    "family": "Asteraceae or Compositae",
+    "common_name": "Jersey Cudweed"
+  },
+  {
+    "scientific_name": "Abelmoschus manihot",
+    "family": "Malvaceae",
+    "common_name": "Aibika"
+  },
+  {
+    "scientific_name": "Dodonaea viscosa",
+    "family": "Sapindaceae",
+    "common_name": "Native Hops"
+  },
+  {
+    "scientific_name": "Lindera strychnifolia",
+    "family": "Lauraceae",
+    "common_name": "Lindera strychnifolia"
+  },
+  {
+    "scientific_name": "Myrica rubra",
+    "family": "Myricaceae",
+    "common_name": "Chinese Bayberry"
+  },
+  {
+    "scientific_name": "Nelumbo nucifera",
+    "family": "Nelumbonaceae",
+    "common_name": "Sacred Water Lotus"
+  },
+  {
+    "scientific_name": "Coix lacryma-jobi",
+    "family": "Poaceae or Gramineae",
+    "common_name": "Job's Tears"
+  },
+  {
+    "scientific_name": "Rubus ellipticus",
+    "family": "Rosaceae",
+    "common_name": "Golden Evergreen Raspberry"
+  },
+  {
+    "scientific_name": "Vitis parvifolia",
+    "family": "Vitaceae",
+    "common_name": "Vitis parvifolia"
+  },
+  {
+    "scientific_name": "Debregeasia longifolia",
+    "family": "Urticaceae",
+    "common_name": "Wild Rhea"
+  },
+  {
+    "scientific_name": "Saururus chinensis",
+    "family": "Saururaceae",
+    "common_name": "Saururus chinensis"
+  },
+  {
+    "scientific_name": "Zanthoxylum alatum",
+    "family": "Rutaceae",
+    "common_name": "Winged Prickly Ash"
+  },
+  {
+    "scientific_name": "Sambucus chinensis",
+    "family": "Caprifoliaceae",
+    "common_name": "Chinese Elder"
+  }
+]

@@ -27,12 +27,31 @@ class ExportTaxa extends Command
 
         $taxa = Plant::query()
             ->orderBy('scientific_name')
-            ->get(['scientific_name', 'family', 'common_name'])
-            ->map(fn (Plant $plant) => [
-                'scientific_name' => $plant->scientific_name,
-                'family' => $plant->family,
-                'common_name' => $plant->common_name,
-            ]);
+            ->get(['scientific_name', 'family', 'common_name', 'common_names', 'native_range', 'distribution', 'medicinal_rating'])
+            ->map(function (Plant $plant) {
+                $rawAliases = $plant->common_names
+                    ? preg_split('/[,;\/]+/', (string) $plant->common_names)
+                    : [];
+
+                $aliases = collect($rawAliases)
+                    ->map(fn ($name) => trim((string) $name))
+                    ->filter(fn ($name) => $name !== '' && strcasecmp($name, (string) $plant->common_name) !== 0)
+                    ->unique()
+                    ->values()
+                    ->all();
+
+                $isPhilippine = str_contains(strtolower((string) $plant->native_range), 'philippin')
+                    || str_contains(strtolower((string) $plant->distribution), 'philippin');
+
+                return [
+                    'scientific_name' => $plant->scientific_name,
+                    'family' => $plant->family,
+                    'common_name' => $plant->common_name,
+                    'aliases' => $aliases,
+                    'is_philippine' => $isPhilippine,
+                    'medicinal_rating' => $plant->medicinal_rating,
+                ];
+            });
 
         File::ensureDirectoryExists(dirname($path));
         File::put($path, $taxa->toJson(JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
