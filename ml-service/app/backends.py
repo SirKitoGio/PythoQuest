@@ -120,40 +120,42 @@ def build_prompts(taxon: Taxon, plant_part: str) -> list[str]:
     if plant_part == DEFAULT_PLANT_PART:
         prompts.append(f"a photo of {taxon.family} {taxon.scientific_name}")
         prompts.append(f"a photo of {taxon.scientific_name}")
-        if genus and taxon.family:
-            prompts.append(f"a photo of Plantae {taxon.family} {genus} {taxon.scientific_name}")
-            prompts.append(f"a photo of {taxon.scientific_name}, genus {genus}, family {taxon.family}")
-        prompts.append(f"a botanical specimen photo of {taxon.scientific_name}")
-        prompts.append(f"a field photograph of {taxon.scientific_name} in nature")
-        prompts.append(f"a clear photo of {taxon.scientific_name} showing leaves and structure")
-        if taxon.category:
-            prompts.append(f"a photo of {taxon.scientific_name}, a {taxon.category.lower()} plant")
         if taxon.common_name:
-            prompts.append(f"a photo of {taxon.common_name}, a plant of the {taxon.family} family")
             prompts.append(f"a photo of {taxon.common_name} ({taxon.scientific_name})")
-            prompts.append(f"a photo of {taxon.common_name}")
-            if taxon.is_philippine:
+        if taxon.is_philippine:
+            if genus and taxon.family:
+                prompts.append(f"a photo of Plantae {taxon.family} {genus} {taxon.scientific_name}")
+                prompts.append(f"a photo of {taxon.scientific_name}, genus {genus}, family {taxon.family}")
+            prompts.append(f"a botanical specimen photo of {taxon.scientific_name}")
+            prompts.append(f"a field photograph of {taxon.scientific_name} in nature")
+            prompts.append(f"a clear photo of {taxon.scientific_name} showing leaves and structure")
+            if taxon.category:
+                prompts.append(f"a photo of {taxon.scientific_name}, a {taxon.category.lower()} plant")
+            if taxon.common_name:
+                prompts.append(f"a photo of {taxon.common_name}, a plant of the {taxon.family} family")
+                prompts.append(f"a photo of {taxon.common_name}")
                 prompts.append(f"a photo of {taxon.common_name}, a Philippine medicinal plant")
-        for alias in taxon.aliases:
-            if alias:
-                prompts.append(f"a photo of {alias} ({taxon.scientific_name})")
-                prompts.append(f"a photo of {alias}")
-                if taxon.is_philippine:
+            for alias in taxon.aliases:
+                if alias:
+                    prompts.append(f"a photo of {alias} ({taxon.scientific_name})")
+                    prompts.append(f"a photo of {alias}")
                     prompts.append(f"a photo of {alias}, a plant found in the Philippines")
     else:
         prompts.append(f"a photo of the {plant_part} of {taxon.family} {taxon.scientific_name}")
         prompts.append(f"a photo of the {plant_part} of {taxon.scientific_name}")
-        if genus and taxon.family:
-            prompts.append(f"a photo of the {plant_part} of Plantae {taxon.family} {genus} {taxon.scientific_name}")
-        prompts.append(f"a close-up photo of the {plant_part} of {taxon.scientific_name}")
-        prompts.append(f"macro photograph of the {plant_part} of {taxon.scientific_name}")
         if taxon.common_name:
             prompts.append(f"a photo of the {plant_part} of {taxon.common_name} ({taxon.scientific_name})")
-            prompts.append(f"a photo of the {plant_part} of {taxon.common_name}")
-        for alias in taxon.aliases:
-            if alias:
-                prompts.append(f"a photo of the {plant_part} of {alias} ({taxon.scientific_name})")
-                prompts.append(f"a photo of the {plant_part} of {alias}")
+        if taxon.is_philippine:
+            if genus and taxon.family:
+                prompts.append(f"a photo of the {plant_part} of Plantae {taxon.family} {genus} {taxon.scientific_name}")
+            prompts.append(f"a close-up photo of the {plant_part} of {taxon.scientific_name}")
+            prompts.append(f"macro photograph of the {plant_part} of {taxon.scientific_name}")
+            if taxon.common_name:
+                prompts.append(f"a photo of the {plant_part} of {taxon.common_name}")
+            for alias in taxon.aliases:
+                if alias:
+                    prompts.append(f"a photo of the {plant_part} of {alias} ({taxon.scientific_name})")
+                    prompts.append(f"a photo of the {plant_part} of {alias}")
 
     # Deduplicate while preserving order and collapsing whitespace
     unique_prompts: list[str] = []
@@ -225,7 +227,7 @@ class BioclipBackend(Backend):
         self._philippine_mask = np.zeros(0, dtype=bool)
         self._family_groups: dict[str, np.ndarray] = {}
         self._genus_groups: dict[str, np.ndarray] = {}
-        self.visual_weight = float(os.environ.get("ML_VISUAL_WEIGHT", "0.70"))
+        self.visual_weight = float(os.environ.get("ML_VISUAL_WEIGHT", "0.55"))
         self.philippine_prior = float(os.environ.get("ML_PHILIPPINE_PRIOR", "0.25"))
         self.use_tta = os.environ.get("ML_USE_TTA", "true").lower() in ("true", "1", "yes")
 

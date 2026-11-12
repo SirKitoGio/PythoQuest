@@ -56,7 +56,7 @@ def calibrate_prototype_similarities(
     """
     calibrated = proto_sim.copy()
     active_count = int(np.sum(mask))
-    if active_count < 3 or np.all(mask):
+    if active_count < 3:
         return calibrated
 
     p_vals = proto_sim[mask]
@@ -69,9 +69,15 @@ def calibrate_prototype_similarities(
     if p_std > 1e-6 and t_std > 1e-6:
         z = (p_vals - p_median) / p_std
         aligned = t_median + z * t_std
-        # Add direct visual confidence bonus when raw image-to-image similarity is strong
-        strong_bonus = np.maximum(0.0, p_vals - 0.55) * 0.35
-        calibrated[mask] = aligned + strong_bonus
+        # Gate above-median visual boosts by text-similarity agreement so a random
+        # background/composition match cannot override BioCLIP when text_sim disagrees
+        t_vals = text_sim[mask]
+        t_z = (t_vals - t_median) / t_std
+        agreement_gate = np.clip((t_z + 0.5) / 1.5, 0.20, 1.0)
+        delta = aligned - t_median
+        gated_delta = np.where(delta > 0, delta * agreement_gate, delta)
+        strong_bonus = np.maximum(0.0, p_vals - 0.55) * 0.35 * agreement_gate
+        calibrated[mask] = t_median + gated_delta + strong_bonus
 
     return calibrated
 
@@ -184,11 +190,13 @@ class PrototypeStore:
         data = {}
         for name, emb in self._prototypes.items():
             entry: dict = {
-                "embedding": emb.tolist(),
+                "embedding": [round(float(x), 4) for x in emb],
                 "metadata": self._metadata.get(name, {}),
             }
             if name in self._exemplars:
-                entry["exemplars"] = self._exemplars[name].tolist()
+                entry["exemplars"] = [
+                    [round(float(x), 4) for x in row] for row in self._exemplars[name]
+                ]
             data[name] = entry
         tmp = target.with_suffix(".tmp.json")
         tmp.write_text(json.dumps(data), encoding="utf-8")

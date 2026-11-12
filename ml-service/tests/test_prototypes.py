@@ -42,7 +42,7 @@ def test_prototype_store_save_load(tmp_path):
     loaded.load()
 
     assert "Psidium guajava" in loaded
-    np.testing.assert_allclose(loaded.get_prototype("Psidium guajava"), emb1, atol=1e-5)
+    np.testing.assert_allclose(loaded.get_prototype("Psidium guajava"), emb1, atol=1e-4)
 
 
 def test_prototype_store_matrix_for_taxa(tmp_path):
