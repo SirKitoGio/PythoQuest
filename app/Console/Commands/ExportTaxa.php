@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Plant;
+use Database\Seeders\PlantSeeder;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -25,10 +26,14 @@ class ExportTaxa extends Command
     {
         $path = $this->option('path') ?? config('services.ml.taxa_path');
 
+        $pilotSpecies = collect(PlantSeeder::PILOT_SPECIES)
+            ->map(fn (array $row) => strtolower($row[1]))
+            ->flip();
+
         $taxa = Plant::query()
             ->orderBy('scientific_name')
-            ->get(['scientific_name', 'family', 'common_name', 'common_names', 'native_range', 'distribution', 'medicinal_rating'])
-            ->map(function (Plant $plant) {
+            ->get(['scientific_name', 'family', 'common_name', 'common_names', 'category', 'native_range', 'distribution', 'medicinal_rating'])
+            ->map(function (Plant $plant) use ($pilotSpecies) {
                 $rawAliases = $plant->common_names
                     ? preg_split('/[,;\/]+/', (string) $plant->common_names)
                     : [];
@@ -40,7 +45,8 @@ class ExportTaxa extends Command
                     ->values()
                     ->all();
 
-                $isPhilippine = str_contains(strtolower((string) $plant->native_range), 'philippin')
+                $isPhilippine = $pilotSpecies->has(strtolower((string) $plant->scientific_name))
+                    || str_contains(strtolower((string) $plant->native_range), 'philippin')
                     || str_contains(strtolower((string) $plant->distribution), 'philippin');
 
                 return [
@@ -48,6 +54,7 @@ class ExportTaxa extends Command
                     'family' => $plant->family,
                     'common_name' => $plant->common_name,
                     'aliases' => $aliases,
+                    'category' => $plant->category,
                     'is_philippine' => $isPhilippine,
                     'medicinal_rating' => $plant->medicinal_rating,
                 ];

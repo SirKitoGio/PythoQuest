@@ -31,6 +31,19 @@ logger = logging.getLogger("fetch-prototypes")
 INATURALIST_API = "https://api.inaturalist.org/v1/observations"
 PHILIPPINES_PLACE_ID = 6883  # iNaturalist place ID for the Philippines
 
+SYNONYM_MAP: dict[str, list[str]] = {
+    "Buddleia asiatica": ["Buddleja asiatica"],
+    "Pueraria pseudohirsuta": ["Pueraria montana", "Pueraria lobata"],
+    "Zanthoxylum alatum": ["Zanthoxylum armatum"],
+    "Celastrus dependens": ["Celastrus paniculatus"],
+    "Lindera strychnifolia": ["Lindera aggregata"],
+    "Canarium luzonicum": ["Canarium ovatum", "Canarium album"],
+    "Carmona retusa": ["Ehretia microphylla"],
+    "Combretum indicum": ["Quisqualis indica"],
+    "Coleus amboinicus": ["Plectranthus amboinicus"],
+    "Mentha cordifolia": ["Mentha spicata", "Mentha villosa"],
+}
+
 
 def fetch_species_photos(
     client: httpx.Client,
@@ -39,29 +52,19 @@ def fetch_species_photos(
     philippines_priority: bool = True,
 ) -> list[str]:
     """Fetch verified research-grade photo URLs for a species from iNaturalist."""
-    urls = []
+    urls: list[str] = []
+    candidate_names = [scientific_name, *SYNONYM_MAP.get(scientific_name, [])]
 
-    # Try Philippines first if requested
-    if philippines_priority:
-        try:
-            resp = client.get(
-                INATURALIST_API,
-                params={
-                    "taxon_name": scientific_name,
-                    "quality_grade": "research",
-                    "photos": "true",
-                    "place_id": PHILIPPINES_PLACE_ID,
-                    "per_page": max_photos,
-                },
-                timeout=15.0,
-            )
-            if resp.status_code == 429:
-                logger.warning("iNaturalist rate limit hit; waiting 3s...")
-                time.sleep(3.0)
+    for query_name in candidate_names:
+        if len(urls) >= max_photos:
+            break
+        # Try Philippines first if requested
+        if philippines_priority:
+            try:
                 resp = client.get(
                     INATURALIST_API,
                     params={
-                        "taxon_name": scientific_name,
+                        "taxon_name": query_name,
                         "quality_grade": "research",
                         "photos": "true",
                         "place_id": PHILIPPINES_PLACE_ID,
@@ -69,45 +72,61 @@ def fetch_species_photos(
                     },
                     timeout=15.0,
                 )
-            if resp.status_code == 200:
-                urls = parse_inaturalist_photos(resp.json(), max_photos=max_photos)
-        except Exception as e:
-            logger.debug("Failed regional query for %s: %s", scientific_name, e)
+                if resp.status_code == 429:
+                    logger.warning("iNaturalist rate limit hit; waiting 3s...")
+                    time.sleep(3.0)
+                    resp = client.get(
+                        INATURALIST_API,
+                        params={
+                            "taxon_name": query_name,
+                            "quality_grade": "research",
+                            "photos": "true",
+                            "place_id": PHILIPPINES_PLACE_ID,
+                            "per_page": max_photos,
+                        },
+                        timeout=15.0,
+                    )
+                if resp.status_code == 200:
+                    for u in parse_inaturalist_photos(resp.json(), max_photos=max_photos):
+                        if u not in urls:
+                            urls.append(u)
+            except Exception as e:
+                logger.debug("Failed regional query for %s: %s", query_name, e)
 
-    # Fall back to global research-grade photos if insufficient regional ones found
-    if len(urls) < max_photos:
-        try:
-            needed = max_photos - len(urls)
-            resp = client.get(
-                INATURALIST_API,
-                params={
-                    "taxon_name": scientific_name,
-                    "quality_grade": "research",
-                    "photos": "true",
-                    "per_page": needed,
-                },
-                timeout=15.0,
-            )
-            if resp.status_code == 429:
-                logger.warning("iNaturalist rate limit hit; waiting 3s...")
-                time.sleep(3.0)
+        # Fall back to global research-grade photos if insufficient regional ones found
+        if len(urls) < max_photos:
+            try:
+                needed = max_photos - len(urls)
                 resp = client.get(
                     INATURALIST_API,
                     params={
-                        "taxon_name": scientific_name,
+                        "taxon_name": query_name,
                         "quality_grade": "research",
                         "photos": "true",
                         "per_page": needed,
                     },
                     timeout=15.0,
                 )
-            if resp.status_code == 200:
-                global_urls = parse_inaturalist_photos(resp.json(), max_photos=needed)
-                for u in global_urls:
-                    if u not in urls:
-                        urls.append(u)
-        except Exception as e:
-            logger.warning("Failed global query for %s: %s", scientific_name, e)
+                if resp.status_code == 429:
+                    logger.warning("iNaturalist rate limit hit; waiting 3s...")
+                    time.sleep(3.0)
+                    resp = client.get(
+                        INATURALIST_API,
+                        params={
+                            "taxon_name": query_name,
+                            "quality_grade": "research",
+                            "photos": "true",
+                            "per_page": needed,
+                        },
+                        timeout=15.0,
+                    )
+                if resp.status_code == 200:
+                    global_urls = parse_inaturalist_photos(resp.json(), max_photos=needed)
+                    for u in global_urls:
+                        if u not in urls:
+                            urls.append(u)
+            except Exception as e:
+                logger.warning("Failed global query for %s: %s", query_name, e)
 
     return urls[:max_photos]
 
@@ -179,7 +198,10 @@ def main():
         targets_file = SERVICE_DIR / "data" / "target_philippine_species.json"
         if targets_file.exists():
             content = json.loads(targets_file.read_text(encoding="utf-8"))
-            target_set = {s.strip().lower() for s in content}
+            target_set = {
+                (s["scientific_name"] if isinstance(s, dict) else s).strip().lower()
+                for s in content
+            }
             taxa = [t for t in taxa if t.scientific_name.lower() in target_set]
             logger.info("Filtered by targets to %d species", len(taxa))
 
@@ -243,7 +265,13 @@ def main():
         if embeddings:
             mean_emb = np.mean(embeddings, axis=0)
             mean_emb = mean_emb / np.linalg.norm(mean_emb)
-            store.set_prototype(name, mean_emb, sample_count=len(embeddings), source="inaturalist")
+            store.set_prototype(
+                name,
+                mean_emb,
+                sample_count=len(embeddings),
+                source="inaturalist",
+                exemplars=embeddings,
+            )
             success_count += 1
             logger.info("  Successfully created prototype for %s (from %d photos)", name, len(embeddings))
 

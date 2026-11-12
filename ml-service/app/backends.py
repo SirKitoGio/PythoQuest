@@ -14,9 +14,13 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter, ImageOps
 
-from app.prototypes import PrototypeStore, blend_similarities
+from app.prototypes import (
+    PrototypeStore,
+    blend_similarities,
+    calibrate_prototype_similarities,
+)
 
 logger = logging.getLogger("ml-service")
 
@@ -42,6 +46,31 @@ class Taxon:
     aliases: tuple[str, ...] = ()
     is_philippine: bool = False
     medicinal_rating: int | None = None
+    category: str | None = None
+
+    @property
+    def genus(self) -> str:
+        parts = self.scientific_name.split()
+        return parts[0] if parts else ""
+
+
+def letterbox_pad(image: Image.Image) -> Image.Image:
+    """Pad a rectangular image to a square so CLIP center-crop preserves leaf apex and base."""
+    w, h = image.size
+    if w == h or min(w, h) < 16:
+        return image
+    side = max(w, h)
+    # Estimate background fill color from image corners
+    corners = [
+        image.getpixel((0, 0)),
+        image.getpixel((w - 1, 0)),
+        image.getpixel((0, h - 1)),
+        image.getpixel((w - 1, h - 1)),
+    ]
+    fill = tuple(int(np.median([c[i] for c in corners])) for i in range(3))
+    canvas = Image.new("RGB", (side, side), fill)
+    canvas.paste(image, ((side - w) // 2, (side - h) // 2))
+    return canvas
 
 
 def resolve_taxa_path() -> Path:
@@ -77,21 +106,28 @@ def load_taxa(path: Path) -> list[Taxon]:
                 aliases=aliases,
                 is_philippine=bool(row.get("is_philippine", False)),
                 medicinal_rating=row.get("medicinal_rating"),
+                category=row.get("category"),
             )
         )
     return taxa
 
 
 def build_prompts(taxon: Taxon, plant_part: str) -> list[str]:
-    """Generate an ensemble of prompt templates combining scientific, common, and vernacular names."""
+    """Generate an ensemble of prompt templates combining taxonomic hierarchy, morphology, and vernacular names."""
     prompts: list[str] = []
+    genus = taxon.genus
 
     if plant_part == DEFAULT_PLANT_PART:
         prompts.append(f"a photo of {taxon.family} {taxon.scientific_name}")
         prompts.append(f"a photo of {taxon.scientific_name}")
+        if genus and taxon.family:
+            prompts.append(f"a photo of Plantae {taxon.family} {genus} {taxon.scientific_name}")
+            prompts.append(f"a photo of {taxon.scientific_name}, genus {genus}, family {taxon.family}")
         prompts.append(f"a botanical specimen photo of {taxon.scientific_name}")
         prompts.append(f"a field photograph of {taxon.scientific_name} in nature")
         prompts.append(f"a clear photo of {taxon.scientific_name} showing leaves and structure")
+        if taxon.category:
+            prompts.append(f"a photo of {taxon.scientific_name}, a {taxon.category.lower()} plant")
         if taxon.common_name:
             prompts.append(f"a photo of {taxon.common_name}, a plant of the {taxon.family} family")
             prompts.append(f"a photo of {taxon.common_name} ({taxon.scientific_name})")
@@ -107,6 +143,8 @@ def build_prompts(taxon: Taxon, plant_part: str) -> list[str]:
     else:
         prompts.append(f"a photo of the {plant_part} of {taxon.family} {taxon.scientific_name}")
         prompts.append(f"a photo of the {plant_part} of {taxon.scientific_name}")
+        if genus and taxon.family:
+            prompts.append(f"a photo of the {plant_part} of Plantae {taxon.family} {genus} {taxon.scientific_name}")
         prompts.append(f"a close-up photo of the {plant_part} of {taxon.scientific_name}")
         prompts.append(f"macro photograph of the {plant_part} of {taxon.scientific_name}")
         if taxon.common_name:
@@ -185,6 +223,8 @@ class BioclipBackend(Backend):
         self._proto_matrix = np.zeros((0, 0), dtype=np.float32)
         self._proto_mask = np.zeros(0, dtype=bool)
         self._philippine_mask = np.zeros(0, dtype=bool)
+        self._family_groups: dict[str, np.ndarray] = {}
+        self._genus_groups: dict[str, np.ndarray] = {}
         self.visual_weight = float(os.environ.get("ML_VISUAL_WEIGHT", "0.70"))
         self.philippine_prior = float(os.environ.get("ML_PHILIPPINE_PRIOR", "0.25"))
         self.use_tta = os.environ.get("ML_USE_TTA", "true").lower() in ("true", "1", "yes")
@@ -217,6 +257,17 @@ class BioclipBackend(Backend):
         self.taxa = taxa
         self._text_embeddings = embeddings
         self._philippine_mask = np.array([t.is_philippine for t in taxa], dtype=bool)
+
+        fam_map: dict[str, list[int]] = {}
+        gen_map: dict[str, list[int]] = {}
+        for idx, t in enumerate(taxa):
+            if t.family:
+                fam_map.setdefault(t.family.lower(), []).append(idx)
+            if t.genus:
+                gen_map.setdefault(t.genus.lower(), []).append(idx)
+        self._family_groups = {k: np.array(v, dtype=np.int32) for k, v in fam_map.items() if len(v) > 1}
+        self._genus_groups = {k: np.array(v, dtype=np.int32) for k, v in gen_map.items() if len(v) > 1}
+
         self.prototype_store.load()
         if len(self.prototype_store) > 0 and len(taxa) > 0:
             dim = next(iter(embeddings.values())).shape[1] if embeddings else 512
@@ -235,8 +286,8 @@ class BioclipBackend(Backend):
         key = hashlib.sha1(
             json.dumps(
                 {
-                    "taxa": [[t.family, t.scientific_name, t.common_name or "", list(t.aliases)] for t in taxa],
-                    "template": "ensemble_v2",
+                    "taxa": [[t.family, t.scientific_name, t.common_name or "", list(t.aliases), t.category or ""] for t in taxa],
+                    "template": "ensemble_v3",
                     "part": plant_part,
                     "model": self.model_version,
                 },
@@ -285,22 +336,36 @@ class BioclipBackend(Backend):
         torch = self._torch
         with torch.no_grad():
             if self.use_tta:
-                from PIL import ImageOps
+                views: list[Image.Image] = [
+                    image,
+                    image.transpose(Image.Transpose.FLIP_LEFT_RIGHT),
+                ]
+                weights: list[float] = [1.4, 1.0]
 
-                views = [image, image.transpose(Image.Transpose.FLIP_LEFT_RIGHT)]
                 w, h = image.size
+                if w != h and min(w, h) >= 32:
+                    views.append(letterbox_pad(image))
+                    weights.append(1.2)
+
                 if w >= 48 and h >= 48:
                     views.append(image.crop((int(w * 0.05), int(h * 0.05), int(w * 0.95), int(h * 0.95))))
+                    weights.append(1.0)
                     views.append(image.crop((int(w * 0.10), int(h * 0.10), int(w * 0.90), int(h * 0.90))))
+                    weights.append(0.9)
+
                 try:
                     views.append(ImageOps.autocontrast(image, cutoff=1))
+                    weights.append(0.9)
+                    views.append(image.filter(ImageFilter.SHARPEN))
+                    weights.append(0.8)
                 except Exception:
                     pass
 
                 pixels = torch.stack([self.preprocess(v) for v in views]).to(self.device)
                 features = self.model.encode_image(pixels).float()
                 features = features / features.norm(dim=-1, keepdim=True)
-                avg_feat = features.mean(dim=0, keepdim=True)
+                w_tensor = torch.tensor(weights[: len(views)], dtype=torch.float32, device=self.device).unsqueeze(1)
+                avg_feat = (features * w_tensor).sum(dim=0, keepdim=True) / w_tensor.sum()
                 avg_feat = avg_feat / avg_feat.norm(dim=-1, keepdim=True)
                 image_emb = avg_feat.cpu().numpy()[0]
             else:
@@ -309,12 +374,40 @@ class BioclipBackend(Backend):
                 features = features / features.norm(dim=-1, keepdim=True)
                 image_emb = features.cpu().numpy()[0]
 
-        text_sim = self._text_embeddings[plant_part] @ image_emb
-        if np.any(self._proto_mask):
-            proto_sim = self._proto_matrix @ image_emb
-            combined = blend_similarities(text_sim, proto_sim, self._proto_mask, self.visual_weight)
+        # Cross-part organ ensembling: blend requested part with best-matching organ
+        primary_text_sim = self._text_embeddings[plant_part] @ image_emb
+        if len(self._text_embeddings) > 1:
+            organ_sims = np.stack([emb @ image_emb for emb in self._text_embeddings.values()], axis=0)
+            best_organ_sim = np.max(organ_sims, axis=0)
+            text_sim = 0.78 * primary_text_sim + 0.22 * best_organ_sim
         else:
-            combined = text_sim
+            text_sim = primary_text_sim
+
+        if np.any(self._proto_mask):
+            raw_proto_sim = self.prototype_store.score_taxa(
+                self.taxa, image_emb, self._proto_matrix, self._proto_mask
+            )
+            calibrated_proto_sim = calibrate_prototype_similarities(
+                text_sim, raw_proto_sim, self._proto_mask
+            )
+            combined = blend_similarities(
+                text_sim, calibrated_proto_sim, self._proto_mask, self.visual_weight
+            )
+        else:
+            combined = text_sim.copy()
+
+        # Hierarchical taxonomic consistency reinforcement (genus & family support)
+        if getattr(self, "_family_groups", None) or getattr(self, "_genus_groups", None):
+            tax_bonus = np.zeros_like(combined)
+            for indices in getattr(self, "_family_groups", {}).values():
+                group_vals = combined[indices]
+                top_k_mean = float(np.mean(np.sort(group_vals)[-min(3, len(group_vals)) :]))
+                tax_bonus[indices] += 0.04 * top_k_mean
+            for indices in getattr(self, "_genus_groups", {}).values():
+                group_vals = combined[indices]
+                top_k_mean = float(np.mean(np.sort(group_vals)[-min(2, len(group_vals)) :]))
+                tax_bonus[indices] += 0.04 * top_k_mean
+            combined = combined + tax_bonus
 
         # Calibrated logit temperature scaling: avoids over-peaked softmax
         scale = float(os.environ.get("ML_LOGIT_SCALE", min(self.logit_scale, 45.0)))
