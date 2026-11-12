@@ -46,13 +46,11 @@ class PlantSeeder extends Seeder
      */
     public function run(): void
     {
-        if (! is_readable(config('services.pfaf.export_path'))) {
+        if (is_readable(config('services.pfaf.export_path'))) {
+            Artisan::call('phytoquest:import-pfaf');
+        } elseif (Plant::count() === 0) {
             Plant::factory(12)->create();
-
-            return;
         }
-
-        Artisan::call('phytoquest:import-pfaf');
 
         foreach (self::PILOT_SPECIES as [$filipino, $scientific, $family, $category, $habitat, $parts]) {
             $plant = Plant::firstOrNew(['scientific_name' => $scientific]);
